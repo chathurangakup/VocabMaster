@@ -1,4 +1,4 @@
-package com.vocabularyapp
+package com.chathuranga.vocabmaster
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

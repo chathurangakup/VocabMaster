@@ -1,4 +1,4 @@
-package com.vocabularyapp
+package com.chathuranga.vocabmaster
 
 import android.app.Application
 import com.facebook.react.PackageList
