@@ -5,6 +5,7 @@ import Splash from '../screens/onboarding/Splash';
 import Login from '../screens/onboarding/Login/Login';
 
 import Lessons from '../screens/lessons/Lessons';
+import MainScreen from '../screens/mainScreen/MainScreen';
 import Profile from '../screens/profile/Profile';
 import {BottomTabs} from './BottomTabNavigation'
 
@@ -16,6 +17,7 @@ const onboardingScreens: any = {
 const signInScreens: any = {
     bottomTabs: {screen: BottomTabs},
     lessons: {screen: Lessons},
+    mainScreen : {screen: MainScreen}
 }
 
 

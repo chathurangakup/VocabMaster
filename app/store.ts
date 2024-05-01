@@ -1,14 +1,16 @@
 import { configureStore, combineReducers} from '@reduxjs/toolkit';
 import { persistStore, persistReducer, Storage } from 'redux-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { MMKV } from 'react-native-mmkv'
+// import { MMKV } from 'react-native-mmkv'
 
 import loginReducer from './screens/onboarding/Login/LoginSlice';
+import lessonsReducer from './screens/lessons/LessonSlice';
 import commonReducer from './slices/CommonSlice';
 
 const combinedReducer = combineReducers({ 
   login: loginReducer,
-  common: commonReducer
+  common: commonReducer,
+  lessons: lessonsReducer
 })
 
 const rootReducer = (state: any, action: any) => {
@@ -20,24 +22,24 @@ const rootReducer = (state: any, action: any) => {
   return combinedReducer(state, action);
 };
 
-const storage = new MMKV();
+// const storage = new MMKV();
 
 
 
-export const reduxStorage: Storage = {
-  setItem: (key, value) => {
-    storage.set(key, value)
-    return Promise.resolve(true)
-  },
-  getItem: (key) => {
-    const value = storage.getString(key)
-    return Promise.resolve(value)
-  },
-  removeItem: (key) => {
-    storage.delete(key)
-    return Promise.resolve()
-  },
-}
+// export const reduxStorage: Storage = {
+//   setItem: (key, value) => {
+//     storage.set(key, value)
+//     return Promise.resolve(true)
+//   },
+//   getItem: (key) => {
+//     const value = storage.getString(key)
+//     return Promise.resolve(value)
+//   },
+//   removeItem: (key) => {
+//     storage.delete(key)
+//     return Promise.resolve()
+//   },
+// }
 
 const persistConfig = {
   key: 'root',

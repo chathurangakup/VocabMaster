@@ -1,14 +1,23 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Text, View, SafeAreaView, StyleSheet, Image, Animated, Dimensions, FlatList, TouchableOpacity } from 'react-native'
 import { AppBar } from '../../componants/AppBar';
 import Images from '../../config/Images.d';
 import { colors } from '../../config/styles';
 import { mainListArray } from '../../utils/constants';
+import { changeLoadingStatus } from '../../slices/CommonSlice';
+import { useDispatch } from 'react-redux';
 
 const { width, height } = Dimensions.get('window');
 
 const Home = (props: any) => {
+  const dispatch = useDispatch<any>();
+
   const animated = new Animated.Value(0);
+
+
+  useEffect(()=>{
+    dispatch(changeLoadingStatus(false))
+  },[])
 
   const SubjectItem = ({items}:any) => {
     console.log("items",items)

@@ -21,7 +21,7 @@ export const AppBar = (props: {
       <View
         style={[
           props.isShowBack
-            ? [{backgroundColor: colors.blackColor},styles.bckBtnStyles,]
+            ? [{backgroundColor: 'transparent'},styles.bckBtnStyles,]
             : {backgroundColor: 'transparent'},
         ]}>
         {props.isShowBack == false ? null : (
@@ -34,8 +34,11 @@ export const AppBar = (props: {
           </TouchableOpacity>
         )}
       </View>
-      <View style={{flex: 5, alignItems: 'center', justifyContent:'center',alignContent:'center'}}>
+      <View style={{flex: 5,alignItems:'center'}}>
         <Text style={styles.titleStyles}>{props.title}</Text>
+      </View>
+      <View style={{flex:1}}>
+
       </View>
       {/* <View
         style={[

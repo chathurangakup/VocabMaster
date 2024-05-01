@@ -13,5 +13,5 @@ export default {
     UserProfile,
     Loading,
     Learn,
-    Battle
+    Battle,
 }
