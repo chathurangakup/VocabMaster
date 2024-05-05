@@ -20,7 +20,7 @@ const initialState: LessonsState = {
   loading: false,
   errorMessage: '',
 }
-const apiUrl = 'https://firebasestorage.googleapis.com/v0/b/vocapp-f579a.appspot.com/o/basic.json?alt=media&token=fdaae561-8d5e-463b-85cc-8838c9fdc146';
+const apiUrl = 'https://firebasestorage.googleapis.com/v0/b/vocapp-f579a.appspot.com/o/basic.json?alt=media&token=bf025c88-7c4f-425e-9f0a-1f637cc3463c';
 
 
 export const getLessionInfo = createAsyncThunk("lessons/getLessionInfo", async () => {
@@ -35,7 +35,9 @@ export const lessonsSlice = createSlice({
   name: 'lessons',
   initialState,
   reducers: {
- 
+    changeBasicLessonInfo: (state: { lessonsInfo: any; }, action: any ) => {
+      state.lessonsInfo =  action.payload
+    },
   },
   extraReducers: builder => {
     builder.addCase(getLessionInfo.pending, state => {
@@ -55,6 +57,6 @@ export const lessonsSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-// export const { getLessonsInformations} = lessonsSlice.actions
+export const { changeBasicLessonInfo  } = lessonsSlice.actions
 
 export default lessonsSlice.reducer

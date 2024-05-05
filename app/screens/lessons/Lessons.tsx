@@ -8,7 +8,8 @@ import Images from '../../config/Images.d';
 import { useDispatch, useSelector } from 'react-redux';
 import { getLessionInfo } from './LessonSlice';
 import { AppDispatch, RootState } from '../../store';
-
+import { Search } from '../../componants/Search';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 
 
@@ -19,45 +20,59 @@ const { width, height } = Dimensions.get('window');
 const Lessons = (props: any) => {
   const dispatch = useDispatch<AppDispatch>();
   const { lessonsInfo, loading, } = useSelector((state: RootState) => state.lessons);
-  const animated = new Animated.Value(0);
   const [lessionListArray, setLessionListArray] = useState([]);
-  const [error, setError] = useState({});
+  const [searchText,setSearchText]=useState('');
+  const [filteredData, setFilteredData] = useState(lessionListArray);
 
-  useEffect(() => {
-    dispatch(getLessionInfo());
-  }, []);
 
   useEffect(() => {
     if (lessonsInfo != undefined) {
-      console.log(loading, "<--->", lessonsInfo, "<---->")
       setLessionListArray(lessonsInfo);
-    }
+      setFilteredData(lessonsInfo)
 
-  }, [lessonsInfo])
+    }else{
+      dispatch(getLessionInfo());
+    }
+  }, [lessonsInfo,filteredData])
+
+
+  useEffect(() => {
+    const filtered = lessionListArray.filter((item) =>
+      item.title.toLowerCase().startsWith(searchText.toLowerCase())
+    );
+    setFilteredData(filtered);
+  }, [searchText]); 
 
 
   const TitlesItem = ({ titles }: any) => {
     return (
       <TouchableOpacity
+        key={titles.id}
         activeOpacity={0.0}
         onPress={() => {
             props.navigation.navigate('mainScreen', {
-              spellingList: titles.item.spellingList,
+              spellingList: titles.spellingList,
+              spellingListMainId: titles.id,
             });
         }}
-        style={styles.subjectItemBtn}>
+        style={[styles.card, styles.shadowProp, {borderColor:  titles.isComplete==true? '#90EF90':'#FAAAAD' } ]}>
         <View
           style={{
             flexDirection: 'row',
-            justifyContent: 'flex-start',
-            paddingLeft: 20,
+            justifyContent: 'space-between',
+            paddingLeft: 10,
           }}>
-          <View style={{}}>
-            <Text style={styles.subjName}>{titles.item.id}. </Text>
+          <View style={{flexDirection: 'row',}}>
+            <Text style={styles.subjName}>{titles.id}. </Text>
+            <Text style={styles.subjName}>{titles.title}</Text>
           </View>
-          <View style={{}}>
-            <Text style={styles.subjName}>{titles.item.title}</Text>
+
+   
+          <View style={{flexDirection: 'row'}}>
+            <Text style={styles.statusStyle}>{'pending'}</Text>
+            <Icon name="navigate-next" size={20} color={colors.blackColor}  style={{paddingTop:5}}/>
           </View>
+
         </View>
       </TouchableOpacity>
     );
@@ -67,25 +82,21 @@ const Lessons = (props: any) => {
     <SafeAreaView style={styles.root}>
       <AppBar
         navigation={props.navigation}
-        title={'Lessions'}
+        title={'Lessons'}
         isShowBack={true}
 
       />
       <View style={styles.header}>
         <Image source={Images.SubjectTeach} style={styles.imgStyles} />
+        <Text style={styles.menuTitle}>Learn new words daily with our fun and engaging approach.</Text>
+  
 
-        {/* <View style={styles.animateIconRoot}>
-        <Animated.View
-          style={[styles.animateIcon, {transform: [{translateY: animated}]}]}
-        />
-      </View> */}
-
-        {/* <Search onChange={text => searchText(text)} /> */}
+        <Search onChange={text => setSearchText(text)} value={searchText} />
       </View>
 
       <View style={{ flex: 1 }}>
         <FlatList
-          data={lessionListArray}
+          data={filteredData}
           style={{
             marginTop: -80,
 
@@ -97,7 +108,7 @@ const Lessons = (props: any) => {
           numColumns={1}
           // keyExtractor={item=> item.value}
           // keyExtractor={(item, index) => item.id}
-          renderItem={item => <TitlesItem titles={item} />}
+          renderItem={({item, index, separators}) => <TitlesItem titles={item} />}
         />
       </View>
     </SafeAreaView>
@@ -106,16 +117,24 @@ const Lessons = (props: any) => {
 
 const styles = StyleSheet.create({
   root: { flex: 1, position: 'relative' },
-  subjectItemBtn: {
-    backgroundColor: colors.lightBlue,
+
+  card: {
+    backgroundColor:'#fbf7f5',
     margin: 10,
-    width: width,
+    borderWidth:3,
+    width: width/1.1,
     height: 70,
     borderRadius: 20,
     padding: 20,
-    //   shadow: '#9e9808',
     elevation: 5,
   },
+  shadowProp: {
+    shadowColor: '#171717',
+    shadowOffset: {width: -2, height: 6},
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+  },
+
   subjectItemImgStyle: {
     width: width / 2.4,
     height: height / 5,
@@ -152,9 +171,23 @@ const styles = StyleSheet.create({
     color: 'black',
     fontSize: 18,
     alignSelf: 'center',
-    fontWeight: 'bold',
+    fontFamily:'Quicksand-Bold'
+
+  },
+  statusStyle:{
+    color: 'black',
+    fontSize: 14,
+    width:60,
+    height:20,
+    alignSelf: 'center',
+    fontFamily:'Quicksand-Regular',
+    borderRadius:20,
+
+    backgroundColor: colors.mutedYellow,
+
   },
   subjSubName: { color: 'black', alignSelf: 'center', padding: 5 },
+  menuTitle: { color: colors.blackColor, fontSize: 18, paddingTop: height/20,fontFamily:'Quicksand-Regular' },
 });
 
 export default Lessons

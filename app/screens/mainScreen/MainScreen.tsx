@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Animated, ImageBackground, SafeAreaView, ScrollView, Text, TouchableOpacity, View, Dimensions, KeyboardAvoidingView, TextInput, Keyboard, FlatList } from 'react-native';
 import Images from '../../config/Images.d';
 import TrackPlayer, { Capability } from 'react-native-track-player';
@@ -7,11 +7,12 @@ import { styles } from './Styles';
 import { AppBar } from '../../componants/AppBar';
 import { colors } from '../../config/styles';
 import Icons from 'react-native-vector-icons/AntDesign';
- import { vocabResponce } from '../../utils/constants';
-import Timer from '../../componants/Timer';
-import { changeLoadingStatus } from '../../slices/CommonSlice'
-import { useDispatch } from 'react-redux';
+import { changeLoadingStatus } from '../../slices/CommonSlice';
+import { changeBasicLessonInfo } from '../../screens/lessons/LessonSlice'
+import { useDispatch, useSelector } from 'react-redux';
 import { fetchDataSpellingMeaningApi } from '../../utils/utils';
+import { RootState } from '../../store';
+
 
 
 const MainScreen = (props: any) => {
@@ -20,32 +21,31 @@ const MainScreen = (props: any) => {
 
     const [currentQuectionIndex, setCurrentQuectionIndex] = useState(0);
     const [vocabResponce, setvocabResponce] = useState([])
-    const [timeCount, setTimeMinuteCount] = useState('00');
-    const [showNextButton, setShowNextButton] = useState(true);
     const [spellingText, setSpellingText] = useState('');
     const [speakerColorStatus, setSpeakerColorStatus] = useState(-1);
+    const [isDisableButton, setIsDisableButton] = useState(true);
 
-    //const [quections, setQuections] = useState(allQuections);
+    const [isSucessAns, setIsSuccessAns] = useState(false);
+    const [isShowTextInput, setIsShowTextInput] = useState(true);
+    const [isEndTimeout, setIsEndTimeout] = useState(false);
 
-  
+    const initialTime = 120;
+
+    const [remainingTime, setRemainingTime] = useState(initialTime);
+    const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+    const { lessonsInfo, loading } = useSelector((state: RootState) => state.lessons);
+
+
     const { width, height } = Dimensions.get('window');
 
-    const { spellingList } = props.route.params;
+    const { spellingList,spellingListMainId } = props.route.params;
 
     const [progress, setProgress] = useState(new Animated.Value(0));
     const progressAnim = progress.interpolate({
         inputRange: [0, spellingList.length],
-        outputRange: ['60%', '100%'],
+        outputRange: ['0%', '100%'],
     });
-    const progressAnimTime = progress.interpolate({
-        inputRange: [0, 120],
-        outputRange: ['100%', '0%'],
-    });
-
-    const convertSeconds = (s: any) => {
-        var sec = s % 120;
-        return '' + ("00" + sec).substr(-2);
-    }
 
 
     const setupPlayer = async () => {
@@ -61,53 +61,91 @@ const MainScreen = (props: any) => {
                     Capability.SkipToPrevious,
                     Capability.Stop,
                 ],
-
-                // Capabilities that will show up when the notification is in the compact form on Android
                 compactCapabilities: [Capability.Play, Capability.Pause],
             });
-            // const newArray = vocabResponce.map((item, index) => ({
-            //     id: index + 1, // Add 1 for starting IDs at 1
-            //     url: item.phonetics[0].audio,
-            //     title: item.phonetics[0].license.name,
-            // }));
-            // await TrackPlayer.add(newArray);
-            isPlayerInitialized= true
+            isPlayerInitialized = true
         } catch (e) { }
     }
 
     useEffect(() => {
-         setupPlayer()
-         
-        
-       // return () => {TrackPlayer.reset()}
+        setupPlayer()
     }, []);
+    
 
+    const updateIsComplete = (id: any) => {
+        const updatedTasks = lessonsInfo.map((task: any) => {
+            // If the task's id matches the provided id, update its isComplete property to true
+            if (task.id === id) {
+                return {
+                    ...task,
+                    isComplete: true
+                };
+            }
+            return task;
+        });
+    
+        return updatedTasks;
+    };
 
-
-    const SpellingCheckApiCall =async() =>{
+    const SpellingCheckApiCall = async () => {
         dispatch(changeLoadingStatus(true))
-        const responce =await fetchDataSpellingMeaningApi(spellingList[currentQuectionIndex]?.titleSpelling);
-        console.log("responce user", await JSON.stringify(responce))
+        const responce = await fetchDataSpellingMeaningApi(spellingList[currentQuectionIndex]?.title);
+        console.log("responce user", JSON.stringify(responce))
         setvocabResponce(await responce);
         dispatch(changeLoadingStatus(false));
-       
+
     }
 
 
-    useEffect(()=>{
-       console.log("ccccccccc",spellingList[currentQuectionIndex])
-       SpellingCheckApiCall();
-    },[currentQuectionIndex])
+    useEffect(() => {
+        console.log("ccccccccc", spellingList[currentQuectionIndex])
+        SpellingCheckApiCall();
+    }, [currentQuectionIndex])
 
-    const clickNextButton =() =>{
-        setCurrentQuectionIndex(currentQuectionIndex + 1);
+    const clickSubmitButton = async() => {
+        const value=updateIsComplete(1)
+
+
+        dispatch(changeBasicLessonInfo(value))
+        // console.log("spellingList oooo", spellingList[currentQuectionIndex]?.titleSpellin)
+        // if (spellingList[currentQuectionIndex]?.title == spellingText.toLowerCase()) {
+        //     setIsSuccessAns(true)
+        //     setIsShowTextInput(false)
+        // } else {
+        //     setIsSuccessAns(false)
+        //     setIsShowTextInput(false)
+        // }
     }
+
+    const clickNextButton = () => {
+        if (currentQuectionIndex + 1 < spellingList.length) {
+            setIsShowTextInput(true);
+            setCurrentQuectionIndex(currentQuectionIndex + 1);
+            setSpellingText('');
+            handleRestart()
+            setIsEndTimeout(false)
+            Animated.timing(progress, {
+                toValue: currentQuectionIndex + 1,
+                duration: 1000,
+                useNativeDriver: false,
+            }).start();
+        } else {
+            clearInterval(intervalRef.current); // Stop the current interval
+            setRemainingTime(0);
+        }
+
+    }
+
+    // useEffect(()=>{
+    //     setTimeoutTime(20)
+
+    // },[timerValue])
 
     const renderProgressBar = () => {
         return (
             <View>
                 <View style={styles.InprogressAnimated}>
-                    <Animated.View style={[styles.animatedbarStyle, { width: progressAnim }]}>
+                    {currentQuectionIndex + 1 <= 1 ?
                         <View style={{ padding: 6 }}>
                             <View
                                 style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
@@ -120,136 +158,135 @@ const MainScreen = (props: any) => {
                                 <Text style={styles.inProgressTxtstyle}>Vocabulary</Text>
                             </View>
                         </View>
+                        : null
+
+
+                    }
+
+
+                    <Animated.View style={[styles.animatedbarStyle, { width: progressAnim }]}>
+
+                        <View style={{ padding: 6 }}>
+                            <View
+                                style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+                                <Text style={styles.quectionTextStyle}>
+                                    {'Step '}{currentQuectionIndex + 1}{' '}
+                                </Text>
+                                <Text style={styles.inProgressTxtstyle}> / {spellingList.length} </Text>
+                            </View>
+                            <View>
+                                <Text style={styles.inProgressTxtstyle}>Vocabulary</Text>
+                            </View>
+                        </View>
+
                     </Animated.View>
+
                 </View>
             </View>
         );
     };
 
-    const renderTimeProgressBar = () => {
+
+
+    const renderSubmitButton = () => {
+
         return (
-            <View>
-                <View
-                    style={{
-                        flexDirection: 'row',
-                        alignItems: 'flex-end',
-                        padding: 5,
-                        justifyContent: 'center',
-                    }}>
-                    {/* <Text style={styles.quectionTextStyle}>
-                {currentQuectionIndex + 1}{' '}
-              </Text> */}
-                    <Text style={styles.inProgressTxtstyle}> {timeCount} : {convertSeconds(30)}</Text>
+            <View style={styles.nextBtnRoot}>
+                <View style={styles.nxtBtnMain}>
+                    <TouchableOpacity
+                        style={[styles.nextBtnStyles, { backgroundColor: isDisableButton ? colors.gray : colors.secondaryColor2, }]}
+                        onPress={() => isShowTextInput ? clickSubmitButton() : clickNextButton()}
+                        disabled={isDisableButton}>
+                        <Text style={styles.nextBtnTextStyles}>{isShowTextInput ? 'Submit' : 'Next'}</Text>
+                    </TouchableOpacity>
                 </View>
 
-                <View style={styles.InprogressAnimated}>
-                    <Animated.View
-                        style={[styles.animatedbarStyle, { width: progressAnimTime }]}
-                    />
-                </View>
-                <View
-                    style={{
-                        flexDirection: 'row',
-                        alignItems: 'flex-end',
-                        padding: 5,
-                        justifyContent: 'center',
-                    }}>
-                    <Text style={styles.quectionTextStyle}>
-                        {currentQuectionIndex + 1}{' '}
-                    </Text>
-                    <Text style={styles.inProgressTxtstyle}> / {spellingList.length} </Text>
-                </View>
             </View>
         );
-    };
 
-    const renderNextButton = () => {
-        if (showNextButton) {
-            return (
-                <View style={styles.nextBtnRoot}>
-                    <View style={styles.nxtBtnMain}>
-                        <TouchableOpacity
-                            style={styles.nextBtnStyles}
-                            onPress={() => clickNextButton()}>
-                            <Text style={styles.nextBtnTextStyles}>NEXT</Text>
-                        </TouchableOpacity>
-                    </View>
-
-                </View>
-            );
-        } else {
-            return null;
-        }
     };
 
     const RenderMainView = ({ data, index }: any) => {
         return (
             <View style={{ backgroundColor: 'white', margin: 15, borderRadius: 10 }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingTop: 10, paddingLeft: 10, paddingRight: 10 }}>
-                   
-                   {data.phonetics[0]?.audio !==undefined?
-                   <View style={{ width: 50, height: 50, marginRight: (width * 5) / 100 }}>
-                   <TouchableOpacity  disabled={ speakerColorStatus == -1 ? false :true}>
-                   <Icons
-                       name="sound"
-                       size={30}
-                       disabled={ speakerColorStatus == -1 ? false :true}
-                       color={ index == speakerColorStatus? colors.red: colors.blackColor}
-                       onPress={async () => {
 
-                           try {   
-                               console.log('lolo', index)
-                             await TrackPlayer.reset();
-                             const newObj ={
-                               id: 1,
-                               url: data.phonetics[0].audio,
-                               title: data.phonetics[index].license.name,
-                             }
-                             await TrackPlayer.add(newObj);
-                             await TrackPlayer.play();
-                             console.log('lolo', index)
-                             setSpeakerColorStatus(index)
-                             setTimeout(() => {
-                               setSpeakerColorStatus(-1);
-                             }, 5000);
-                           } catch (e) {
-                               console.log(e)
-                           }
+                    {data.phonetics[0]?.audio !== undefined ?
+                        <View style={{ width: 50, height: 50, marginRight: (width * 5) / 100 }}>
+                            <TouchableOpacity disabled={speakerColorStatus == -1 ? false : true}>
+                                <Icons
+                                    name="sound"
+                                    size={30}
+                                    disabled={speakerColorStatus == -1 ? false : true}
+                                    color={index == speakerColorStatus ? colors.red : colors.blackColor}
+                                    onPress={async () => {
 
-                       }}
-                   />
-                   </TouchableOpacity>
-                 
-               </View>
-               :null
-                   
-                
-                }
-                    
+                                        try {
+                                            console.log('lolo', index)
+                                            await TrackPlayer.reset();
+                                            const newObj = {
+                                                id: 1,
+                                                url: data.phonetics[0].audio,
+
+                                            }
+                                            await TrackPlayer.add(newObj);
+                                            await TrackPlayer.play();
+                                            console.log('lolo', index)
+                                            setSpeakerColorStatus(index)
+                                            setTimeout(() => {
+                                                setSpeakerColorStatus(-1);
+                                            }, 5000);
+                                        } catch (e) {
+                                            console.log(e)
+                                        }
+
+                                    }}
+                                />
+                            </TouchableOpacity>
+
+                        </View>
+                        : null
+
+
+                    }
+
                 </View>
                 <View>
-                {data.meanings.map((item: any, index1: number) => 
-                <View>
-                    <View style={{ marginLeft: (width * 5) / 100, marginTop: (height * 1) / 100 }}>
-                        <Text style={{ fontSize: 25, color: colors.blackColor }}>{item.partOfSpeech}</Text>
-                    </View>
-                    <View>
-                       <Text style={{ paddingLeft: (width * 6) / 100, color: colors.blackColor }}>definition</Text>
-                       {item.definitions.map((item: any, index2: number) =>  <Text key={index2} style={{ paddingLeft: (width * 6) / 100, paddingTop: 10, color: colors.blackColor }}>{index2 + 1}. {item.definition}</Text>)}
-                     
-                    </View>
-                    </View>
-                
-                )}
-                      
-                  
-                    
+                    {data.meanings.map((item: any, index1: number) =>
+                        <View>
+                            <View style={{ marginLeft: (width * 5) / 100, marginTop: (height * 1) / 100 }}>
+                                <Text style={{ fontSize: 25, color: colors.blackColor }}>{item.partOfSpeech}</Text>
+                            </View>
+                            <View>
+                                <Text style={{ paddingLeft: (width * 6) / 100, color: colors.blackColor }}>definition</Text>
+                                {item.definitions.map((item: any, index2: number) => <Text key={index2} style={{ paddingLeft: (width * 6) / 100, paddingTop: 10, color: colors.blackColor }}>{index2 + 1}. {item.definition}</Text>)}
+
+                            </View>
+                        </View>
+
+                    )}
                 </View>
             </View>
         )
     }
 
-    const OtpInput = () => {
+
+    const spellingType = (spelling: string) => {
+        setSpellingText(spelling)
+    }
+
+    useEffect(() => {
+        if (spellingText == '') {
+            setIsDisableButton(true)
+        } else {
+            setIsDisableButton(false)
+        }
+    }, [spellingText])
+
+
+
+
+    const SpellingInput = () => {
         return (
             <View>
                 <View
@@ -264,7 +301,7 @@ const MainScreen = (props: any) => {
                         numberOfLines={1}
                         maxLength={20}
                         placeholder='Enter Spelling'
-                        onChangeText={text => setSpellingText(text)}
+                        onChangeText={text => spellingType(text)}
                         value={spellingText}
                         blurOnSubmit={true}
                         onSubmitEditing={() => { Keyboard.dismiss() }}
@@ -275,6 +312,36 @@ const MainScreen = (props: any) => {
             </View>
         )
     }
+
+
+
+    const decreaseTime = () => {
+        if (remainingTime > 0) {
+            setRemainingTime(prevTime => prevTime - 1);
+        } else {
+            clearInterval(intervalRef.current);
+            setIsShowTextInput(false)
+            setIsEndTimeout(true)
+            setIsDisableButton(false)
+        }
+    };
+
+    useEffect(() => {
+        intervalRef.current = setInterval(decreaseTime, 1000); // Decrease every second
+        return () => clearInterval(intervalRef.current);
+    }, [remainingTime]);
+
+    const handleRestart = () => {
+        clearInterval(intervalRef.current); // Stop the current interval
+        setRemainingTime(initialTime); // Reset the remaining time
+        intervalRef.current = setInterval(decreaseTime, 1000); // Start a new interval
+    };
+
+    const formatTime = (time: number) => {
+        const minutes = Math.floor(time / 60).toString().padStart(2, '0');
+        const seconds = (time % 60).toString().padStart(2, '0');
+        return `${minutes}:${seconds}`;
+    };
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -291,7 +358,8 @@ const MainScreen = (props: any) => {
                         {renderProgressBar()}
                     </View>
                     <View style={{ flex: 1 }}>
-                        <Timer initialTime={120} onEnd={() => console.log('Timer ended!')} />
+                        <Text style={{ fontSize: 25, fontWeight: 'bold' }}>{formatTime(remainingTime)}</Text>
+                        {/* <Timer initialTime={timerValue} onEnd={() => endTimer()} onRestart={()=>handleRestart()} /> */}
                     </View>
                 </View>
 
@@ -303,10 +371,25 @@ const MainScreen = (props: any) => {
                             )}
                         </ScrollView>
                     </View>
-                    {OtpInput()}
-                
+                    {isShowTextInput ?
+                        SpellingInput()
+                        :
+                        <View>
+                            {
+                                isEndTimeout == true ?
+                                    <Text>Time out Correct ans is + {spellingList[currentQuectionIndex]?.title}</Text>
+                                    :
+                                    isSucessAns ?
+                                        <Text>Correct</Text>
+                                        :
+                                        <Text>wrong and corret and is {spellingList[currentQuectionIndex]?.title}</Text>
+
+
+                            }
+                        </View>
+                    }
                 </ScrollView>
-                {renderNextButton()}
+                {renderSubmitButton()}
             </ImageBackground>
         </SafeAreaView>
     )

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Text, View, SafeAreaView, StyleSheet, Image, Animated, Dimensions, FlatList, TouchableOpacity } from 'react-native'
+import { Text, View, SafeAreaView, StyleSheet, Image, Animated, Dimensions, FlatList, TouchableOpacity, ImageBackground } from 'react-native'
 import { AppBar } from '../../componants/AppBar';
 import Images from '../../config/Images.d';
 import { colors } from '../../config/styles';
@@ -22,27 +22,26 @@ const Home = (props: any) => {
   const SubjectItem = ({items}:any) => {
     console.log("items",items)
     return (
+     
       <TouchableOpacity
         activeOpacity={0.0}
         onPress={() => {
           props.navigation.navigate('lessons', {
             mainId: items.item.id,
           });
-          // props.navigation.navigate('gradesMain', {
-          //   subjectId: subjects.item._id,
-          //   categoryName: 'Learn'
-          // });
         }}
-        style={styles.mainItemBtn}>
+        style={[styles.mainItemBtn, {backgroundColor: items.item.color}]}>
+          <Text style={styles.mainItemName}>{items.item.title}</Text>
+          <Text style={styles.secondryItemName}>{items.item.subTitle}</Text>
         <Image
           style={styles.mainItemImgStyle}
-          // source={{
-          //   uri: items.image,
-          // }}
+          source={Images.BgWave}
         />
-        <Text style={styles.mainItemName}>{items.item.title}</Text>
-        {/* <Text style={styles.mainSubName}>{subjects.item.subjectSubName}</Text> */}
+          
+
       </TouchableOpacity>
+
+
     );
   };
 
@@ -56,13 +55,13 @@ const Home = (props: any) => {
       />
       <View style={styles.header}>
         <Image source={Images.SubjectTeach} style={styles.imgStyles} />
-        <Text style={styles.menuTitle}>ssjj</Text>
+        <Text style={styles.menuTitle}>Expand your vocabulary and express yourself with confidence!</Text>
       </View>
 
       <View style={{paddingBottom:60}}>
         <FlatList
           data={mainListArray}
-          style={{paddingHorizontal: 20, marginTop: -120, marginBottom: 80}}
+          style={styles.mainArrayListStyles}
           contentContainerStyle={{alignItems: 'center'}}
           showsVerticalScrollIndicator={false}
           numColumns={2}
@@ -77,19 +76,21 @@ const Home = (props: any) => {
 const styles = StyleSheet.create({
   root: { flex: 1, position: 'relative' },
   mainItemBtn: {
-    backgroundColor: colors.darkGreen,
     margin: 10,
-    width: width / 2.2,
+    width: width / 2.6,
     height: height / 3.5,
     borderRadius: 10,
+    opacity:1,
     // padding: 15,
     // shadow: '#9e9808',
     elevation: 5,
   },
+  mainArrayListStyles:{paddingHorizontal: 20, marginTop: -120, marginBottom: 80},
   mainItemImgStyle: {
-    width: width / 2.2,
+    width: width / 2.6,
     height: height / 5,
     borderRadius: 10,
+    opacity:0.4
   },
   header: {
     width: '100%',
@@ -107,19 +108,9 @@ const styles = StyleSheet.create({
     width: 300,
     height: 300,
   },
-  animateIconRoot: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-  animateIcon: {
-    width: 60,
-    height: 60,
-    backgroundColor: 'white',
-    borderRadius: 30,
-  },
-  menuTitle: { color: colors.white, fontSize: 18, paddingTop: 20 },
-  mainItemName: {color: colors.white, fontSize: 25, alignSelf: 'center'},
+  menuTitle: { color: colors.blackColor, fontSize: 18, paddingTop: height/15,fontFamily:'Quicksand-Regular' },
+  mainItemName: {color: colors.blackColor, fontSize: 25, alignSelf: 'center', fontFamily:'Quicksand-Regular',marginTop:20},
+  secondryItemName:{color: colors.blackColor, fontSize: 12, alignSelf: 'center', fontFamily:'Quicksand-Regular',marginTop:0},
 
 });
 

@@ -55,6 +55,8 @@ export const styles = StyleSheet.create({
     height: 50,
     borderRadius: 20,
     backgroundColor: colors.primaryColor1,
+    position: 'relative',
+    flex:1
   },
   wrongAnsStyle: {
     width: 30,
@@ -137,7 +139,7 @@ export const styles = StyleSheet.create({
   nextBtnStyles: {
     marginTop: 20,
     width: '100%',
-    backgroundColor: colors.secondaryColor2,
+ 
     padding: 10,
     borderRadius: 35,
   },

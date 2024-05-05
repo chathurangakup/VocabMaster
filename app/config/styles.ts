@@ -27,7 +27,13 @@ export const colors = {
   green1: '#20B2AA',
   red: '#FC0000',
   darkGreen: '#003300',
-  fontColor: '#522289'
+  fontColor: '#522289',
+  gray: '#777777',
+  lightTeal: '#90E0EF',
+  mutedYellow:'#E0D79E',
+  lightOrange:'#F9C79E',
+  lightGray:'#EAE6F2'
+
 };
 
 export const materialTextFieldStyle = {

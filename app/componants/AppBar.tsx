@@ -21,8 +21,8 @@ export const AppBar = (props: {
       <View
         style={[
           props.isShowBack
-            ? [{backgroundColor: 'transparent'},styles.bckBtnStyles,]
-            : {backgroundColor: 'transparent'},
+            ? [{backgroundColor: 'transparent'}, styles.bckBtnStyles,]
+            : {backgroundColor: 'transparent',flex: 1},
         ]}>
         {props.isShowBack == false ? null : (
           <TouchableOpacity onPress={() => _backHandler()}>

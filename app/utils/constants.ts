@@ -1,23 +1,33 @@
+import { colors } from "../config/styles";
+
 export const mainListArray = [
     {
         id:1,
         title:'Basic',
-        image:''
+        subTitle:'Level 1',
+        image:'',
+        color: colors.lightTeal
     },
     {
         id:2,
-        title:'Medium',
-        image:''
+        title:'Medium 1',
+        subTitle:'Level 2',
+        image:'',
+        color: colors.mutedYellow
     },
     {
         id:3,
         title:'Medium 2',
-        image:''
+        subTitle:'Level 3',
+        image:'',
+        color: colors.lightOrange
     },
     {
         id:4,
         title:'Advance',
-        image:''
+        subTitle:'Level 4',
+        image:'',
+        color: colors.lightGray
 
     }
 ];
@@ -30,7 +40,7 @@ export const lessionListArray = [
         spellingList : [
             {
                 id:1,
-                title: 'Brain',
+                title: 'brain',
                 isComplete: false
             },
              {
@@ -40,9 +50,70 @@ export const lessionListArray = [
             },
             {
                 id:3,
-                title: 'Leg',
+                title: 'leg',
                 isComplete: false
-            }
+            },
+            {
+              id:4,
+              title: 'cut',
+              isComplete: false
+          },
+           {
+              id:5,
+              title: 'shut',
+              isComplete: false
+          },
+          {
+              id:6,
+              title: 'laptop',
+              isComplete: false
+          },
+          {
+            id:7,
+            title: 'book',
+            isComplete: false
+        },
+         {
+            id:8,
+            title: 'pen',
+            isComplete: false
+        },
+        {
+            id:9,
+            title: 'jack',
+            isComplete: false
+        },
+        {
+          id:10,
+          title: 'watch',
+          isComplete: false
+      },
+       {
+          id:11,
+          title: 'glass',
+          isComplete: false
+      },
+      {
+          id:12,
+          title: 'doll',
+          isComplete: false
+      },
+      {
+        id:13,
+        title: 'pencil',
+        isComplete: false
+    },
+     {
+        id:14,
+        title: 'erasor',
+        isComplete: false
+    },
+    {
+        id:15,
+        title: 'phone',
+        isComplete: false
+    },
+
 
 
         ]
