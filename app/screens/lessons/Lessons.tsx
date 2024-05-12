@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { SafeAreaView, View, Text, Image, Animated, FlatList, TouchableOpacity, StyleSheet, Dimensions } from 'react-native'
 import { AppBar } from '../../componants/AppBar'
 import { colors } from '../../config/styles';
@@ -10,30 +10,17 @@ import { getLessionInfo } from './LessonSlice';
 import { AppDispatch, RootState } from '../../store';
 import { Search } from '../../componants/Search';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-
-
-
+import SideUpPanel from '../../componants/SideUpPanel';
 
 
 const { width, height } = Dimensions.get('window');
 
 const Lessons = (props: any) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { lessonsInfo, loading, } = useSelector((state: RootState) => state.lessons);
+  const { lessonsInfo, } = useSelector((state: RootState) => state.lessons);
   const [lessionListArray, setLessionListArray] = useState([]);
-  const [searchText,setSearchText]=useState('');
+  const [searchText, setSearchText] = useState('');
   const [filteredData, setFilteredData] = useState(lessionListArray);
-
-
-  useEffect(() => {
-    if (lessonsInfo != undefined) {
-      setLessionListArray(lessonsInfo);
-      setFilteredData(lessonsInfo)
-
-    }else{
-      dispatch(getLessionInfo());
-    }
-  }, [lessonsInfo,filteredData])
 
 
   useEffect(() => {
@@ -41,7 +28,20 @@ const Lessons = (props: any) => {
       item.title.toLowerCase().startsWith(searchText.toLowerCase())
     );
     setFilteredData(filtered);
-  }, [searchText]); 
+  }, [searchText]);
+
+  useEffect(() => {
+    console.log("lessonsInfo",lessonsInfo)
+    if (lessonsInfo.length !== 0) {
+      setLessionListArray(lessonsInfo);
+      setFilteredData(lessonsInfo)
+      console.log(JSON.stringify(lessonsInfo))
+    } else {
+
+      dispatch(getLessionInfo());
+    } 
+  }, [lessonsInfo])
+
 
 
   const TitlesItem = ({ titles }: any) => {
@@ -50,30 +50,44 @@ const Lessons = (props: any) => {
         key={titles.id}
         activeOpacity={0.0}
         onPress={() => {
-            props.navigation.navigate('mainScreen', {
-              spellingList: titles.spellingList,
-              spellingListMainId: titles.id,
-            });
+          props.navigation.navigate('mainScreen', {
+            spellingList: titles.spellingList,
+            spellingListMainId: titles.id,
+          });
         }}
-        style={[styles.card, styles.shadowProp, {borderColor:  titles.isComplete==true? '#90EF90':'#FAAAAD' } ]}>
+        style={[styles.card, styles.shadowProp]}>
         <View
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
-            paddingLeft: 10,
+   
           }}>
-          <View style={{flexDirection: 'row',}}>
-            <Text style={styles.subjName}>{titles.id}. </Text>
-            <Text style={styles.subjName}>{titles.title}</Text>
+          <View>
+            <View style={{ flexDirection: 'row', }}>
+              <Text style={styles.subjName}>{titles?.id}. </Text>
+              <Text style={styles.subjName}>{titles?.title?.length < 35
+                ? `${titles?.title}`
+                : `${titles?.title.substring(0, 32)}...`}</Text>
+            </View>
+            <View>
+              <Text style={styles?.subjSubName} numberOfLines={1}>
+              {titles?.subTitle?.length < 35
+                ? `${titles?.subTitle}`
+                : `${titles?.subTitle?.substring(0, 32)}...`}
+              </Text>
+            </View>
           </View>
 
-   
-          <View style={{flexDirection: 'row'}}>
-            <Text style={styles.statusStyle}>{'pending'}</Text>
-            <Icon name="navigate-next" size={20} color={colors.blackColor}  style={{paddingTop:5}}/>
+          <View style={{ flexDirection: 'row' }}>
+            <View style={[styles.statusStyleMain, { backgroundColor: titles.isComplete ? colors.green : colors.orangeColor }]}>
+              <Text style={styles.statusStyle}>{titles.isComplete ? 'completed' : 'pending'}</Text>
+            </View>
+
+            <Icon name="navigate-next" size={20} color={colors.blackColor} style={{ paddingTop: 5 }} />
           </View>
 
         </View>
+
       </TouchableOpacity>
     );
   };
@@ -89,7 +103,7 @@ const Lessons = (props: any) => {
       <View style={styles.header}>
         <Image source={Images.SubjectTeach} style={styles.imgStyles} />
         <Text style={styles.menuTitle}>Learn new words daily with our fun and engaging approach.</Text>
-  
+
 
         <Search onChange={text => setSearchText(text)} value={searchText} />
       </View>
@@ -97,20 +111,22 @@ const Lessons = (props: any) => {
       <View style={{ flex: 1 }}>
         <FlatList
           data={filteredData}
+          legacyImplementation={true}
           style={{
             marginTop: -80,
 
             marginLeft: 10,
             marginRight: 10,
           }}
+          extraData={filteredData}
           contentContainerStyle={{ alignItems: 'center' }}
           showsVerticalScrollIndicator={false}
           numColumns={1}
-          // keyExtractor={item=> item.value}
-          // keyExtractor={(item, index) => item.id}
-          renderItem={({item, index, separators}) => <TitlesItem titles={item} />}
+          keyExtractor={(item, index) => item.id}
+          renderItem={({ item, index, separators }) => <TitlesItem titles={item} />}
         />
       </View>
+  
     </SafeAreaView>
   )
 }
@@ -119,18 +135,20 @@ const styles = StyleSheet.create({
   root: { flex: 1, position: 'relative' },
 
   card: {
-    backgroundColor:'#fbf7f5',
+    backgroundColor: '#fbf7f5',
     margin: 10,
-    borderWidth:3,
-    width: width/1.1,
+    borderWidth: 0.2,
+    width: width / 1.1,
     height: 70,
     borderRadius: 20,
-    padding: 20,
+    paddingLeft: (height * 2.1) / 100,
+    paddingRight: (height * 1.1) / 100,
+    paddingTop:(height * 2.1) / 100,
     elevation: 5,
   },
   shadowProp: {
     shadowColor: '#171717',
-    shadowOffset: {width: -2, height: 6},
+    shadowOffset: { width: -2, height: 6 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
   },
@@ -164,30 +182,38 @@ const styles = StyleSheet.create({
   animateIcon: {
     width: 60,
     height: 60,
-    backgroundColor: 'white',
+    backgroundColor: colors.white,
     borderRadius: 30,
   },
   subjName: {
-    color: 'black',
+    color: colors.blackColor,
     fontSize: 18,
     alignSelf: 'center',
-    fontFamily:'Quicksand-Bold'
+    fontFamily: 'Raleway-Bold'
 
   },
-  statusStyle:{
-    color: 'black',
-    fontSize: 14,
-    width:60,
-    height:20,
+  subjSubName: {
+    fontSize: 12,
+    fontFamily: 'Raleway-Italic',
+    paddingLeft:(width*5)/100
+
+  },
+  statusStyleMain: {
+    paddingLeft: (height * 1.1) / 100,
+    paddingRight: (height * 1.1) / 100,
+    borderRadius: 20,
+    justifyContent: 'center'
+  },
+  statusStyle: {
+    color: colors.white,
+    fontSize: 13,
+    height: (height * 2.5) / 100,
     alignSelf: 'center',
-    fontFamily:'Quicksand-Regular',
-    borderRadius:20,
-
-    backgroundColor: colors.mutedYellow,
-
+    fontFamily: 'Quicksand-Bold',
+    textAlign: 'center'
   },
-  subjSubName: { color: 'black', alignSelf: 'center', padding: 5 },
-  menuTitle: { color: colors.blackColor, fontSize: 18, paddingTop: height/20,fontFamily:'Quicksand-Regular' },
+
+  menuTitle: { color: colors.blackColor, fontSize: 18, paddingTop: height / 20, fontFamily: 'Quicksand-Regular' },
 });
 
 export default Lessons

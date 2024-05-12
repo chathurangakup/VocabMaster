@@ -1,5 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { colors } from '../config/styles';
 
 interface CustomButtonProps {
   title: string;
@@ -19,7 +20,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 40,
     borderRadius: 30,
-    backgroundColor: '#007AFF',
+    backgroundColor: colors.btnFillColor,
     justifyContent: 'center',
     alignItems: 'center',
   },

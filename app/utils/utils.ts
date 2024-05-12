@@ -1,4 +1,5 @@
 
+import { changeSlideUpObj } from "../slices/CommonSlice";
 import { SPELLING_MEANING_API } from "./constants";
 
 
@@ -26,4 +27,33 @@ export const fetchDataSpellingMeaningApi = async (word: string) => {
       return error
     //   setIsLoading(false);
     }
+  };
+
+  export const showSlideUpPanel = (
+    title: any,
+    titleColor:any,
+    correctNumberOfAnswers:string,
+    colorcorrectNumberOfAnswers: any,
+    msg: any,
+    twoButtons: any,
+    imgName: any,
+    okPress = () => {},
+    okBtnText: any,
+  ) => {
+    global.store.dispatch(changeSlideUpObj({
+      type: 'SHOW_BOTTOM_ALERT',
+      payload: {
+        alertType: 'SHOW_MARKS',
+        visible: true,
+        title,
+        titleColor,
+        correctNumberOfAnswers,
+        colorcorrectNumberOfAnswers,
+        msg,
+        twoButtons,
+        imgName,
+        okPress,
+        okBtnText,
+      },
+    }));
   };

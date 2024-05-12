@@ -20,7 +20,7 @@ const initialState: LessonsState = {
   loading: false,
   errorMessage: '',
 }
-const apiUrl = 'https://firebasestorage.googleapis.com/v0/b/vocapp-f579a.appspot.com/o/basic.json?alt=media&token=bf025c88-7c4f-425e-9f0a-1f637cc3463c';
+const apiUrl = 'https://firebasestorage.googleapis.com/v0/b/vocapp-f579a.appspot.com/o/basic.json?alt=media&token=27460846-8446-42be-b566-4d8f45161314';
 
 
 export const getLessionInfo = createAsyncThunk("lessons/getLessionInfo", async () => {

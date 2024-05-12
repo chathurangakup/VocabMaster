@@ -55,7 +55,7 @@ export const store = configureStore({
     serializableCheck: false,
   }),
 })
-// global.store = store;
+global.store = store;
 
 export const persistor = persistStore(store)
 

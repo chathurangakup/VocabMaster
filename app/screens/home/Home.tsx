@@ -1,16 +1,20 @@
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 import { Text, View, SafeAreaView, StyleSheet, Image, Animated, Dimensions, FlatList, TouchableOpacity, ImageBackground } from 'react-native'
 import { AppBar } from '../../componants/AppBar';
 import Images from '../../config/Images.d';
 import { colors } from '../../config/styles';
 import { mainListArray } from '../../utils/constants';
 import { changeLoadingStatus } from '../../slices/CommonSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
+import { RootState } from '../../store';
 
 const { width, height } = Dimensions.get('window');
 
 const Home = (props: any) => {
   const dispatch = useDispatch<any>();
+  const { loading,username} = useSelector((state: RootState) => (state.login));
+
 
   const animated = new Animated.Value(0);
 
@@ -45,6 +49,16 @@ const Home = (props: any) => {
     );
   };
 
+       // ref
+       const bottomSheetRef = useRef<BottomSheet>(null);
+
+       // callbacks
+       const handleSheetChanges = useCallback((index: number) => {
+         console.log('handleSheetChanges', index);
+       }, []);
+     
+       const snapPoints = useMemo(()=>['20%', '50%','70%'],[])
+
 
   return (
     <SafeAreaView style={styles.root}>
@@ -55,6 +69,7 @@ const Home = (props: any) => {
       />
       <View style={styles.header}>
         <Image source={Images.SubjectTeach} style={styles.imgStyles} />
+        <Text style={styles.menuUsername}>Hi <Text style={styles.menuUsernameStyle}>{username}</Text></Text>
         <Text style={styles.menuTitle}>Expand your vocabulary and express yourself with confidence!</Text>
       </View>
 
@@ -69,6 +84,7 @@ const Home = (props: any) => {
           renderItem={item => <SubjectItem items={item} />}
         />
       </View>
+
     </SafeAreaView>
   )
 }
@@ -101,14 +117,16 @@ const styles = StyleSheet.create({
   },
   imgStyles: {
     position: 'absolute',
-    opacity: 0.3,
+    opacity: 0.2,
     top: 40,
     left: 15,
     borderRadius: 200,
     width: 300,
     height: 300,
   },
-  menuTitle: { color: colors.blackColor, fontSize: 18, paddingTop: height/15,fontFamily:'Quicksand-Regular' },
+  menuTitle: { color: colors.blackColor, fontSize: 18, paddingTop: (height*2)/100,fontFamily:'Quicksand-Regular' },
+  menuUsername:{color: colors.blackColor, fontSize: 18, paddingTop: (height*5)/100,fontFamily:'Quicksand-Regular'},
+  menuUsernameStyle:{color: colors.blackColor, fontSize: 18, paddingTop: height/15,fontFamily:'Quicksand-Bold'},
   mainItemName: {color: colors.blackColor, fontSize: 25, alignSelf: 'center', fontFamily:'Quicksand-Regular',marginTop:20},
   secondryItemName:{color: colors.blackColor, fontSize: 12, alignSelf: 'center', fontFamily:'Quicksand-Regular',marginTop:0},
 

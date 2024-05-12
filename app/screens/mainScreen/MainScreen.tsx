@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Animated, ImageBackground, SafeAreaView, ScrollView, Text, TouchableOpacity, View, Dimensions, KeyboardAvoidingView, TextInput, Keyboard, FlatList } from 'react-native';
 import Images from '../../config/Images.d';
 import TrackPlayer, { Capability } from 'react-native-track-player';
@@ -10,7 +10,7 @@ import Icons from 'react-native-vector-icons/AntDesign';
 import { changeLoadingStatus } from '../../slices/CommonSlice';
 import { changeBasicLessonInfo } from '../../screens/lessons/LessonSlice'
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchDataSpellingMeaningApi } from '../../utils/utils';
+import { fetchDataSpellingMeaningApi, showSlideUpPanel } from '../../utils/utils';
 import { RootState } from '../../store';
 
 
@@ -28,6 +28,7 @@ const MainScreen = (props: any) => {
     const [isSucessAns, setIsSuccessAns] = useState(false);
     const [isShowTextInput, setIsShowTextInput] = useState(true);
     const [isEndTimeout, setIsEndTimeout] = useState(false);
+    const [numberOfCorrectAns, setNumberOfCorrectAns] = useState(0);
 
     const initialTime = 120;
 
@@ -39,7 +40,7 @@ const MainScreen = (props: any) => {
 
     const { width, height } = Dimensions.get('window');
 
-    const { spellingList,spellingListMainId } = props.route.params;
+    const { spellingList, spellingListMainId } = props.route.params;
 
     const [progress, setProgress] = useState(new Animated.Value(0));
     const progressAnim = progress.interpolate({
@@ -69,8 +70,9 @@ const MainScreen = (props: any) => {
 
     useEffect(() => {
         setupPlayer()
+        console.log("iiiiii", JSON.stringify(lessonsInfo))
     }, []);
-    
+
 
     const updateIsComplete = (id: any) => {
         const updatedTasks = lessonsInfo.map((task: any) => {
@@ -83,7 +85,7 @@ const MainScreen = (props: any) => {
             }
             return task;
         });
-    
+
         return updatedTasks;
     };
 
@@ -98,48 +100,94 @@ const MainScreen = (props: any) => {
 
 
     useEffect(() => {
-        console.log("ccccccccc", spellingList[currentQuectionIndex])
         SpellingCheckApiCall();
     }, [currentQuectionIndex])
 
-    const clickSubmitButton = async() => {
-        const value=updateIsComplete(1)
-
-
-        dispatch(changeBasicLessonInfo(value))
-        // console.log("spellingList oooo", spellingList[currentQuectionIndex]?.titleSpellin)
-        // if (spellingList[currentQuectionIndex]?.title == spellingText.toLowerCase()) {
-        //     setIsSuccessAns(true)
-        //     setIsShowTextInput(false)
-        // } else {
-        //     setIsSuccessAns(false)
-        //     setIsShowTextInput(false)
-        // }
+    const clickSubmitButton = async () => {
+      
+        clearInterval(intervalRef.current)
+        console.log("spellingList oooo", spellingList[currentQuectionIndex]?.titleSpellin)
+        if (spellingList[currentQuectionIndex]?.title == spellingText.toLowerCase()) {
+            setIsSuccessAns(true)
+            setIsShowTextInput(false)
+            setNumberOfCorrectAns((numberOfCorrectAns) => numberOfCorrectAns + 1)
+        } else {
+            setIsSuccessAns(false)
+            setIsShowTextInput(false)
+        }
     }
 
     const clickNextButton = () => {
-        if (currentQuectionIndex + 1 < spellingList.length) {
+        let title = '';
+        let subtitle = '';
+        let ImageShow = ''
+        let titleColor = '';
+        let correctNumberOfAnswers=''
+        let colorcorrectNumberOfAnswers=''
+        if (currentQuectionIndex + 1 >= spellingList.length) {
+
+            if (spellingList.length  == numberOfCorrectAns) {
+                title = "Congratulations"
+                subtitle = "Congratulations! 🎉 You've aced all the questions and enriched your vocabulary. Keep up the great work! 📚✨"
+                ImageShow = Images.Congratulation
+                titleColor = colors.green,
+                colorcorrectNumberOfAnswers = colors.green
+              
+            } else {
+                title = "Sorry"
+                subtitle = "Sorry, it seems you missed some questions. Keep trying to improve your vocabulary! 💪📝",
+                ImageShow = Images.Sorry,
+                titleColor = colors.red,
+                colorcorrectNumberOfAnswers = colors.red
+            }
+
+            correctNumberOfAnswers= numberOfCorrectAns.toString() +' / '+ spellingList.length.toString();
+
+            showSlideUpPanel(
+                title,
+                titleColor,
+                correctNumberOfAnswers,
+                colorcorrectNumberOfAnswers,
+                subtitle,
+                false,
+                ImageShow,
+                () => { 
+                    if(spellingList.length  == numberOfCorrectAns){
+                        const value = updateIsComplete(spellingListMainId)
+                        dispatch(changeBasicLessonInfo(value))
+                        props.navigation.goBack()
+                    }else{
+                        props.navigation.goBack()
+                    }
+                },
+                'OK',
+            )
+
+        } else {
             setIsShowTextInput(true);
             setCurrentQuectionIndex(currentQuectionIndex + 1);
             setSpellingText('');
             handleRestart()
             setIsEndTimeout(false)
             Animated.timing(progress, {
-                toValue: currentQuectionIndex + 1,
+                toValue: currentQuectionIndex + 2,
                 duration: 1000,
                 useNativeDriver: false,
             }).start();
-        } else {
-            clearInterval(intervalRef.current); // Stop the current interval
-            setRemainingTime(0);
+
         }
+
+
+        // if (currentQuectionIndex + 1 < spellingList.length) {
+
+        //     //setProgress(new Animated.Value(0));
+        // } else {
+        //     clearInterval(intervalRef.current); // Stop the current interval
+        //     setRemainingTime(0);
+        // }
 
     }
 
-    // useEffect(()=>{
-    //     setTimeoutTime(20)
-
-    // },[timerValue])
 
     const renderProgressBar = () => {
         return (
@@ -150,34 +198,39 @@ const MainScreen = (props: any) => {
                             <View
                                 style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
                                 <Text style={styles.quectionTextStyle}>
-                                    {'Step '}{currentQuectionIndex + 1}{' '}
+                                    {'  Step '}{currentQuectionIndex + 1}{''}
                                 </Text>
                                 <Text style={styles.inProgressTxtstyle}> / {spellingList.length} </Text>
                             </View>
-                            <View>
-                                <Text style={styles.inProgressTxtstyle}>Vocabulary</Text>
-                            </View>
+
                         </View>
                         : null
-
-
                     }
 
 
                     <Animated.View style={[styles.animatedbarStyle, { width: progressAnim }]}>
+                        {currentQuectionIndex + 1 >= 3 ?
+                            <View style={{ padding: 6 }}>
+                                <View
+                                    style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+                                    <Text style={styles.quectionTextStyle}>
+                                        {'Step '}{currentQuectionIndex + 1}{' '}
+                                    </Text>
+                                    <Text style={styles.inProgressTxtstyle}> / {spellingList.length} </Text>
+                                </View>
 
-                        <View style={{ padding: 6 }}>
-                            <View
-                                style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-                                <Text style={styles.quectionTextStyle}>
-                                    {'Step '}{currentQuectionIndex + 1}{' '}
-                                </Text>
-                                <Text style={styles.inProgressTxtstyle}> / {spellingList.length} </Text>
                             </View>
-                            <View>
-                                <Text style={styles.inProgressTxtstyle}>Vocabulary</Text>
-                            </View>
-                        </View>
+                            :
+                            <View style={{ padding: 6 }}>
+                                <View
+                                    style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+                                    <Text style={styles.quectionTextStyle}>
+                                        {currentQuectionIndex + 1}{' '}
+                                    </Text>
+                                    <Text style={styles.inProgressTxtstyle}> / {spellingList.length} </Text>
+                                </View>
+
+                            </View>}
 
                     </Animated.View>
 
@@ -189,30 +242,27 @@ const MainScreen = (props: any) => {
 
 
     const renderSubmitButton = () => {
-
         return (
             <View style={styles.nextBtnRoot}>
                 <View style={styles.nxtBtnMain}>
                     <TouchableOpacity
-                        style={[styles.nextBtnStyles, { backgroundColor: isDisableButton ? colors.gray : colors.secondaryColor2, }]}
+                        style={[styles.nextBtnStyles, { backgroundColor: isDisableButton ? colors.gray : colors.btnFillColor, }]}
                         onPress={() => isShowTextInput ? clickSubmitButton() : clickNextButton()}
                         disabled={isDisableButton}>
                         <Text style={styles.nextBtnTextStyles}>{isShowTextInput ? 'Submit' : 'Next'}</Text>
                     </TouchableOpacity>
                 </View>
-
             </View>
         );
-
     };
 
     const RenderMainView = ({ data, index }: any) => {
         return (
-            <View style={{ backgroundColor: 'white', margin: 15, borderRadius: 10 }}>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingTop: 10, paddingLeft: 10, paddingRight: 10 }}>
+            <View style={{ backgroundColor: 'white', margin: 15, borderRadius: 10, flex: 1 }}>
+                <View style={{ paddingTop: 10, paddingLeft: 10, paddingRight: 10, justifyContent: 'center', alignItems: 'center' }}>
 
                     {data.phonetics[0]?.audio !== undefined ?
-                        <View style={{ width: 50, height: 50, marginRight: (width * 5) / 100 }}>
+                        <View style={styles.speakerMainStyle}>
                             <TouchableOpacity disabled={speakerColorStatus == -1 ? false : true}>
                                 <Icons
                                     name="sound"
@@ -246,20 +296,17 @@ const MainScreen = (props: any) => {
 
                         </View>
                         : null
-
-
                     }
-
                 </View>
                 <View>
                     {data.meanings.map((item: any, index1: number) =>
                         <View>
                             <View style={{ marginLeft: (width * 5) / 100, marginTop: (height * 1) / 100 }}>
-                                <Text style={{ fontSize: 25, color: colors.blackColor }}>{item.partOfSpeech}</Text>
+                                <Text style={{ fontSize: 25, color: colors.blackColor, fontFamily: 'Raleway-SemiBoldItalic' }}>{item.partOfSpeech}</Text>
                             </View>
                             <View>
-                                <Text style={{ paddingLeft: (width * 6) / 100, color: colors.blackColor }}>definition</Text>
-                                {item.definitions.map((item: any, index2: number) => <Text key={index2} style={{ paddingLeft: (width * 6) / 100, paddingTop: 10, color: colors.blackColor }}>{index2 + 1}. {item.definition}</Text>)}
+                                <Text style={{ paddingLeft: (width * 6) / 100, color: colors.blackColor, fontFamily: 'Raleway-SemiBoldItalic' }}>definition</Text>
+                                {item.definitions.map((item: any, index2: number) => <Text key={index2} style={{ paddingLeft: (width * 6) / 100, paddingTop: 10, color: colors.blackColor, fontFamily: 'Quicksand-Regular' }}>{index2 + 1}. {item.definition}</Text>)}
 
                             </View>
                         </View>
@@ -282,8 +329,6 @@ const MainScreen = (props: any) => {
             setIsDisableButton(false)
         }
     }, [spellingText])
-
-
 
 
     const SpellingInput = () => {
@@ -343,6 +388,29 @@ const MainScreen = (props: any) => {
         return `${minutes}:${seconds}`;
     };
 
+
+    const StatusComponent = (statusValue: string, spelling: string, correctAnsValue: string, statusColor: boolean) => {
+        return (
+            <View style={{ backgroundColor: 'white', borderRadius: 10, width: (width * 80) / 100, justifyContent: "center", alignItems: 'center', padding: 10 }}>
+                <View style={{ flexDirection: 'row', alignContent: 'center', }}>
+                    <Text style={{ flex: 1, paddingLeft: 10, color: colors.blackColor }}>Status</Text>
+                    <Text style={{ flex: 0.1, color: colors.blackColor }}> : </Text>
+                    <Text style={{ fontSize: 18, color: statusColor ? colors.red : colors.green, flex: 0.9 }}>{statusValue}</Text>
+                </View>
+                <View style={{ flexDirection: 'row' }}>
+                    <Text style={{ flex: 1, paddingLeft: 10, color: colors.blackColor }}>Correct Word</Text>
+                    <Text style={{ flex: 0.1, color: colors.blackColor }}> : </Text>
+                    <Text style={{ fontSize: 18, color: statusColor ? colors.red : colors.green, flex: 0.9, fontFamily: 'Quicksand-Bold' }}>{spelling}</Text>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
+                    <Text style={{ flex: 1, paddingLeft: 10, color: colors.blackColor }}>Number of Correct Answers</Text>
+                    <Text style={{ flex: 0.1, paddingTop: 5, color: colors.blackColor }}> : </Text>
+                    <Text style={{ fontSize: 18, color: statusColor ? colors.red : colors.green, flex: 0.9, paddingTop: 5 }}>{numberOfCorrectAns} {'/ 10'}</Text>
+                </View>
+            </View>
+        )
+    }
+
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <ImageBackground
@@ -353,19 +421,18 @@ const MainScreen = (props: any) => {
                     navigation={props.navigation}
                     title={'Speling'}
                 />
-                <View style={{ marginTop: 60, marginLeft: 20, marginRight: 20, flexDirection: 'row' }}>
+                <View style={styles.progressbarmainComp}>
                     <View style={{ flex: 3 }}>
                         {renderProgressBar()}
                     </View>
-                    <View style={{ flex: 1 }}>
-                        <Text style={{ fontSize: 25, fontWeight: 'bold' }}>{formatTime(remainingTime)}</Text>
-                        {/* <Timer initialTime={timerValue} onEnd={() => endTimer()} onRestart={()=>handleRestart()} /> */}
+                    <View style={{ flex: 1, paddingTop: 10, paddingLeft: 5 }}>
+                        <Text style={styles.timerStyle}>{formatTime(remainingTime)}</Text>
                     </View>
                 </View>
 
-                <ScrollView automaticallyAdjustKeyboardInsets={true}>
-                    <View style={{ flex: 1, backgroundColor: 'white', height: height / 1.7, margin: 15, borderRadius: 10 }}>
-                        <ScrollView style={{ flex: 1 }}>
+                <View style={{ flex: 1, height: height }}>
+                    <View style={styles.renderViewStyle}>
+                        <ScrollView automaticallyAdjustKeyboardInsets={true} style={{ height: height }}>
                             {vocabResponce.map((item: any, index: number) =>
                                 <RenderMainView data={item} index={index} />
                             )}
@@ -374,21 +441,20 @@ const MainScreen = (props: any) => {
                     {isShowTextInput ?
                         SpellingInput()
                         :
-                        <View>
+                        <View style={{ flex: 0.3, justifyContent: 'center', alignItems: 'center' }}>
                             {
                                 isEndTimeout == true ?
-                                    <Text>Time out Correct ans is + {spellingList[currentQuectionIndex]?.title}</Text>
+                                    StatusComponent('Timeout', spellingList[currentQuectionIndex]?.title, '1/10', true)
                                     :
                                     isSucessAns ?
-                                        <Text>Correct</Text>
+                                        StatusComponent('Correct', spellingList[currentQuectionIndex]?.title, '1/10', false)
                                         :
-                                        <Text>wrong and corret and is {spellingList[currentQuectionIndex]?.title}</Text>
-
+                                        StatusComponent('Wrong', spellingList[currentQuectionIndex]?.title, '1/10', true)
 
                             }
                         </View>
                     }
-                </ScrollView>
+                </View>
                 {renderSubmitButton()}
             </ImageBackground>
         </SafeAreaView>

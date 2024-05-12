@@ -32,7 +32,9 @@ export const colors = {
   lightTeal: '#90E0EF',
   mutedYellow:'#E0D79E',
   lightOrange:'#F9C79E',
-  lightGray:'#EAE6F2'
+  lightGray:'#EAE6F2',
+  orangeColor:'#FFA500',
+  btnFillColor:'#007AFF'
 
 };
 
