@@ -39,6 +39,7 @@ export const fetchDataSpellingMeaningApi = async (word: string) => {
     imgName: any,
     okPress = () => {},
     okBtnText: any,
+    IsShowcorrectNumberOfAnswers: boolean,
   ) => {
     global.store.dispatch(changeSlideUpObj({
       type: 'SHOW_BOTTOM_ALERT',
@@ -54,6 +55,78 @@ export const fetchDataSpellingMeaningApi = async (word: string) => {
         imgName,
         okPress,
         okBtnText,
+        IsShowcorrectNumberOfAnswers
+      },
+    }));
+  };
+
+
+  export const showSlideUpPanelEditUserName = (
+    title: any,
+    titleColor:any,
+    msg: any,
+    twoButtons: boolean,
+    leftBtnText: any,
+    onPressLeft=()=>{},
+    rightBtnText: any,
+    onPressRight=()=>{},
+    imgName: any,
+    isShowTextInput: boolean,
+    IsShowcorrectNumberOfAnswers: boolean,
+    initUsername: string,
+    onChangeUsername: any,
+  ) => {
+    global.store.dispatch(changeSlideUpObj({
+      type: 'SHOW_BOTTOM_ALERT',
+      payload: {
+        alertType: 'SHOW_MARKS',
+        visible: true,
+        title,
+        titleColor,
+        leftBtnText,
+        onPressLeft,
+        rightBtnText,
+        onPressRight,
+        msg,
+        twoButtons,
+        imgName,
+        isShowTextInput,
+        IsShowcorrectNumberOfAnswers,
+        initUsername,
+        onChangeUsername
+      },
+    }));
+  };
+
+
+
+  export const showSlideUpPanelLogout = (
+    title: any,
+    titleColor:any,
+    msg: any,
+    twoButtons: boolean,
+    leftBtnText: any,
+    onPressLeft=()=>{},
+    rightBtnText: any,
+    onPressRight=()=>{},
+    imgName: any,
+  
+  ) => {
+    global.store.dispatch(changeSlideUpObj({
+      type: 'SHOW_BOTTOM_ALERT',
+      payload: {
+        alertType: 'SHOW_MARKS',
+        visible: true,
+        title,
+        titleColor,
+        leftBtnText,
+        onPressLeft,
+        rightBtnText,
+        onPressRight,
+        msg,
+        twoButtons,
+        imgName,
+        IsShowcorrectNumberOfAnswers:false
       },
     }));
   };

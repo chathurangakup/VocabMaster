@@ -1,0 +1,39 @@
+[
+    {
+        "id": 1,
+        "title": "Transportation",
+        "subTitle": "Learn about different modes of transportation.",
+        "isComplete": false,
+        "spellingList": [
+            {"id": 91, "title": "car"},
+            {"id": 92, "title": "bus"},
+            {"id": 93, "title": "bike"},
+            {"id": 94, "title": "train"},
+            {"id": 95, "title": "boat"},
+            {"id": 96, "title": "plane"},
+            {"id": 97, "title": "walk"},
+            {"id": 98, "title": "drive"},
+            {"id": 99, "title": "road"},
+            {"id": 100, "title": "wheel"}
+        ]
+    },
+    {
+        "id": 2,
+        "title": "School Supplies",
+        "subTitle": "Discover essential items used in school.",
+        "isComplete": false,
+        "spellingList": [
+            {"id": 101, "title": "book"},
+            {"id": 102, "title": "pen"},
+            {"id": 103, "title": "pencil"},
+            {"id": 104, "title": "eraser"},
+            {"id": 105, "title": "ruler"},
+            {"id": 106, "title": "backpack"},
+            {"id": 107, "title": "notebook"},
+            {"id": 108, "title": "marker"},
+            {"id": 109, "title": "glue"},
+            {"id": 110, "title": "scissors"}
+        ]
+    }
+   
+]

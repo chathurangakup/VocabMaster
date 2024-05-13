@@ -6,41 +6,61 @@ import Images from '../../config/Images.d';
 // import { lessionListArray } from '../../utils/constants';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { getLessionInfo } from './LessonSlice';
+import { getBasicLessionInfo, getIntermediateLessionInfo,getAdvanceLessionInfo, getMestryLessionInfo } from './LessonSlice';
 import { AppDispatch, RootState } from '../../store';
 import { Search } from '../../componants/Search';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import SideUpPanel from '../../componants/SideUpPanel';
 
 
 const { width, height } = Dimensions.get('window');
 
 const Lessons = (props: any) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { lessonsInfo, } = useSelector((state: RootState) => state.lessons);
+  const { lessonsBasicInfo,lessonsIntermediateInfo,lessonsAdvanceInfo,lessonsMesteryInfo } = useSelector((state: RootState) => state.lessons);
+  const { isConnectedInternet } = useSelector((state: RootState) => state.common);
   const [lessionListArray, setLessionListArray] = useState([]);
   const [searchText, setSearchText] = useState('');
   const [filteredData, setFilteredData] = useState(lessionListArray);
 
+  const { mainId } = props.route.params;
 
   useEffect(() => {
     const filtered = lessionListArray.filter((item) =>
       item.title.toLowerCase().startsWith(searchText.toLowerCase())
     );
     setFilteredData(filtered);
+
   }, [searchText]);
 
   useEffect(() => {
-    console.log("lessonsInfo",lessonsInfo)
-    if (lessonsInfo.length !== 0) {
-      setLessionListArray(lessonsInfo);
-      setFilteredData(lessonsInfo)
-      console.log(JSON.stringify(lessonsInfo))
+    if (lessonsBasicInfo.length !== 0 || lessonsIntermediateInfo.length !==0 || lessonsAdvanceInfo.length !==0 || lessonsMesteryInfo.length !==0 ) {
+      if(mainId==1){
+        setLessionListArray(lessonsBasicInfo);
+        setFilteredData(lessonsBasicInfo)
+        console.log(JSON.stringify("lessonsBasicInfo",lessonsIntermediateInfo))
+      }else if(mainId ==2){
+        setLessionListArray(lessonsIntermediateInfo);
+        setFilteredData(lessonsIntermediateInfo)
+        console.log(JSON.stringify("lessonsIntermediateInfo",lessonsIntermediateInfo))
+      }else if(mainId ==3){
+        setLessionListArray(lessonsAdvanceInfo);
+        setFilteredData(lessonsAdvanceInfo)
+        console.log(JSON.stringify("lessonsAdvanceInfo",lessonsAdvanceInfo))
+      }else if(mainId ==4){
+        setLessionListArray(lessonsMesteryInfo);
+        setFilteredData(lessonsMesteryInfo)
+        console.log(JSON.stringify("lessonsMesteryInfo",lessonsMesteryInfo))
+      }
+     
     } else {
-
-      dispatch(getLessionInfo());
+      if(isConnectedInternet){
+        dispatch(getBasicLessionInfo());
+        dispatch(getIntermediateLessionInfo());
+        dispatch(getAdvanceLessionInfo());
+        dispatch(getMestryLessionInfo());
+      }
     } 
-  }, [lessonsInfo])
+  }, [lessonsBasicInfo])
 
 
 
@@ -137,9 +157,9 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: '#fbf7f5',
     margin: 10,
-    borderWidth: 0.2,
+    borderWidth: 0.1,
     width: width / 1.1,
-    height: 70,
+    height: 65,
     borderRadius: 20,
     paddingLeft: (height * 2.1) / 100,
     paddingRight: (height * 1.1) / 100,
@@ -195,7 +215,8 @@ const styles = StyleSheet.create({
   subjSubName: {
     fontSize: 12,
     fontFamily: 'Raleway-Italic',
-    paddingLeft:(width*5)/100
+    paddingLeft:(width*5)/100,
+    color: colors.gray
 
   },
   statusStyleMain: {
@@ -207,12 +228,11 @@ const styles = StyleSheet.create({
   statusStyle: {
     color: colors.white,
     fontSize: 13,
-    height: (height * 2.5) / 100,
+    height: (height * 2.7) / 100,
     alignSelf: 'center',
     fontFamily: 'Quicksand-Bold',
     textAlign: 'center'
   },
-
   menuTitle: { color: colors.blackColor, fontSize: 18, paddingTop: height / 20, fontFamily: 'Quicksand-Regular' },
 });
 

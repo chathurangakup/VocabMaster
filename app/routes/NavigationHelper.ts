@@ -17,7 +17,7 @@ export function onNavigationStateChange() {
   if (previousRoute.routeName !== currentRoute.routeName) {
     // global.currentScreen = currentRoute;
     // global.previousScreen = previousRoute;
-    // global.routeName = currentRoute.routeName;
+    global.routeName = currentRoute.routeName;
     console.log('currentRoute', currentRoute.routeName);
   }
 

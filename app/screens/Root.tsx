@@ -4,18 +4,20 @@ import NetInfo from '@react-native-community/netinfo';
 
 import { MainStack, Onboarding } from '../routes/NavigationStack';
 import { RootState } from '../store';
-import { useSelector } from 'react-redux';
+import { useDispatch,useSelector } from 'react-redux';
 import { LoadingSpinner } from '../componants/LoadingSpinner';
 import SideUpPanel from '../componants/SideUpPanel';
 import { colors } from '../config/styles';
+import {changeInternetConnectionStatus} from '../slices/CommonSlice'
 
 
 const { width, height } = Dimensions.get('window');
 
 const Root = () => {
-  const { loading,username} = useSelector((state: RootState) => ( state.login));
+  const dispatch = useDispatch<any>();
 
-
+  const { username} = useSelector((state: RootState) => ( state.login));
+  const { loading} = useSelector((state: RootState) => ( state.common));
 
   const [isInternetConnected, setIsInternetConnected] = useState(true);
   let fadeAnim = new Animated.Value(0);
@@ -43,8 +45,10 @@ const Root = () => {
     };
   })
 
-  const handleConnectionChange = (isConnected: boolean | ((prevState: boolean) => boolean)) => {
+  const handleConnectionChange = (isConnected: boolean) => {
     setIsInternetConnected(isConnected);
+    dispatch(changeInternetConnectionStatus(isConnected))
+
   };
 
   const _renderNoInternet = () => {
@@ -67,7 +71,7 @@ const Root = () => {
 
   return (
     <View style={{flex:1}}>
-        <LoadingSpinner showLoading={ loading} />
+        <LoadingSpinner showLoading={loading} />
        {username!==""  ? <MainStack/>:  <Onboarding /> }
        <SideUpPanel/>
        {_renderNoInternet()}

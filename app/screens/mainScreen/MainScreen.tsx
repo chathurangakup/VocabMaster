@@ -36,6 +36,7 @@ const MainScreen = (props: any) => {
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
     const { lessonsInfo, loading } = useSelector((state: RootState) => state.lessons);
+    const { isConnectedInternet } = useSelector((state: RootState) => state.common);
 
 
     const { width, height } = Dimensions.get('window');
@@ -90,11 +91,17 @@ const MainScreen = (props: any) => {
     };
 
     const SpellingCheckApiCall = async () => {
-        dispatch(changeLoadingStatus(true))
-        const responce = await fetchDataSpellingMeaningApi(spellingList[currentQuectionIndex]?.title);
-        console.log("responce user", JSON.stringify(responce))
-        setvocabResponce(await responce);
-        dispatch(changeLoadingStatus(false));
+
+        if(isConnectedInternet){
+            dispatch(changeLoadingStatus(true))
+            const responce = await fetchDataSpellingMeaningApi(spellingList[currentQuectionIndex]?.title);
+            console.log("responce user", JSON.stringify(responce))
+            setvocabResponce(await responce);
+            dispatch(changeLoadingStatus(false));
+        }else{
+            setvocabResponce([]);
+        }
+       
 
     }
 
@@ -161,6 +168,7 @@ const MainScreen = (props: any) => {
                     }
                 },
                 'OK',
+                true,
             )
 
         } else {
@@ -351,7 +359,7 @@ const MainScreen = (props: any) => {
                         blurOnSubmit={true}
                         onSubmitEditing={() => { Keyboard.dismiss() }}
                         textAlign={'center'}
-                        style={{ padding: 5, fontSize: 30 }}
+                        style={{ padding: 5, fontSize: 30, color: colors.blackColor }}
                     />
                 </View>
             </View>

@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
   menuTitle: { color: colors.blackColor, fontSize: 18, paddingTop: (height*2)/100,fontFamily:'Quicksand-Regular' },
   menuUsername:{color: colors.blackColor, fontSize: 18, paddingTop: (height*5)/100,fontFamily:'Quicksand-Regular'},
   menuUsernameStyle:{color: colors.blackColor, fontSize: 18, paddingTop: height/15,fontFamily:'Quicksand-Bold'},
-  mainItemName: {color: colors.blackColor, fontSize: 25, alignSelf: 'center', fontFamily:'Quicksand-Regular',marginTop:20},
+  mainItemName: {color: colors.blackColor, fontSize: 20, alignSelf: 'center', fontFamily:'Quicksand-Regular',marginTop:20},
   secondryItemName:{color: colors.blackColor, fontSize: 12, alignSelf: 'center', fontFamily:'Quicksand-Regular',marginTop:0},
 
 });

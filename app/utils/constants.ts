@@ -3,28 +3,28 @@ import { colors } from "../config/styles";
 export const mainListArray = [
     {
         id:1,
-        title:'Basic',
+        title:'Foundational',
         subTitle:'Level 1',
         image:'',
         color: colors.lightTeal
     },
     {
         id:2,
-        title:'Medium 1',
+        title:'Intermediate',
         subTitle:'Level 2',
         image:'',
         color: colors.mutedYellow
     },
     {
         id:3,
-        title:'Medium 2',
+        title:'Advanced',
         subTitle:'Level 3',
         image:'',
         color: colors.lightOrange
     },
     {
         id:4,
-        title:'Advance',
+        title:'Mastery',
         subTitle:'Level 4',
         image:'',
         color: colors.lightGray
@@ -297,4 +297,11 @@ export const vocabResponce = [
   ]
 
 
-  export const SPELLING_MEANING_API = 'https://api.dictionaryapi.dev/api/v2/entries/en/'
+  export const SPELLING_MEANING_API = 'https://api.dictionaryapi.dev/api/v2/entries/en/';
+
+export const BASIC_API_URL = 'https://firebasestorage.googleapis.com/v0/b/vocabmaster-a6dfd.appspot.com/o/basic.json?alt=media&token=f25345d3-48db-4f33-bb02-482b942218d1';
+export const INTERMEDIATE_API_URL  = 'https://firebasestorage.googleapis.com/v0/b/vocabmaster-a6dfd.appspot.com/o/intermediate.json?alt=media&token=d985f8c6-e6bb-4c92-be05-3e92efdde64a';
+export const ADVANCE_API_URL  = 'https://firebasestorage.googleapis.com/v0/b/vocabmaster-a6dfd.appspot.com/o/advance.json?alt=media&token=caea7e50-dc5a-4f19-950b-21b4cc6acfbf';
+export const MESTRY_API_URL  = 'https://firebasestorage.googleapis.com/v0/b/vocabmaster-a6dfd.appspot.com/o/mestry.json?alt=media&token=c4ea4e86-347c-4a19-ba18-44efee6e0a37';
+
+export const VERSION_CHECK_API_URL  = 'https://firebasestorage.googleapis.com/v0/b/vocabmaster-a6dfd.appspot.com/o/version.json?alt=media&token=af0a0c88-3dad-47bc-ba83-63618ca4e0d9';

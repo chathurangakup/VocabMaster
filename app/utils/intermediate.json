@@ -1,0 +1,39 @@
+[
+    {
+        "id": 1,
+        "title": "Animals",
+        "subTitle": "Learn about different types of animals found in nature.",
+        "isComplete": false,
+        "spellingList": [
+            {"id": 1, "title": "dog"},
+            {"id": 2, "title": "cat"},
+            {"id": 3, "title": "bird"},
+            {"id": 4, "title": "fish"},
+            {"id": 5, "title": "rabbit"},
+            {"id": 6, "title": "horse"},
+            {"id": 7, "title": "cow"},
+            {"id": 8, "title": "duck"},
+            {"id": 9, "title": "sheep"},
+            {"id": 10, "title": "pig"}
+        ]
+    },
+    {
+        "id": 2,
+        "title": "Fruits",
+        "subTitle": "Explore various delicious and nutritious fruits.",
+        "isComplete": false,
+        "spellingList": [
+            {"id": 11, "title": "apple"},
+            {"id": 12, "title": "banana"},
+            {"id": 13, "title": "orange"},
+            {"id": 14, "title": "grape"},
+            {"id": 15, "title": "strawberry"},
+            {"id": 16, "title": "watermelon"},
+            {"id": 17, "title": "pineapple"},
+            {"id": 18, "title": "mango"},
+            {"id": 19, "title": "cherry"},
+            {"id": 20, "title": "lemon"}
+        ]
+    }
+   
+]

@@ -1,18 +1,21 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { View, Text, StyleSheet, Button, Image, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Button, Image, Dimensions, TextInput } from 'react-native';
 import BottomSheet, { BottomSheetModal, BottomSheetView, useBottomSheetSpringConfigs } from '@gorhom/bottom-sheet';
 import { colors } from '../config/styles';
 import CustomButton from './CustomButton';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store';
 import { changeSlideUpObj } from '../slices/CommonSlice';
+import { chnageUsername, changeIsLogin } from '../screens/onboarding/Login/LoginSlice'
 
 const { width, height } = Dimensions.get('window');
 
 const SideUpPanel = (props: any) => {
   const { slideUpPanelConfig } = useSelector((state: RootState) => state.common);
   const snapPoints = useMemo(() => ['25%', '50%', '75%', '100%'], [])
+  const { username } = useSelector((state: RootState) => (state.login));
 
+  const [usernameText, setUsername] = useState(username);
 
   const bottomSheetRef = useRef<BottomSheet>(null);
   const dispatch = useDispatch<any>();
@@ -29,30 +32,38 @@ const SideUpPanel = (props: any) => {
     if (slideUpPanelConfig?.payload?.visible == true) {
       bottomSheetRef.current?.snapToIndex(2);
     }
+    setUsername(username);
   }, [slideUpPanelConfig]);
 
 
-  const handleClose = () => {
+  const onPressLeft = () => {
     if (bottomSheetRef.current) {
       bottomSheetRef.current.close();
     }
+    dispatch(changeSlideUpObj({
+      type: 'HIDE_BOTTOM_ALERT',
+    }));
+
+    if (slideUpPanelConfig?.payload?.isShowTextInput) {
+      if (usernameText !== '') {
+        setUsername(username)
+      }
+    }
+
     slideUpPanelConfig?.payload?.onPressLeft();
   };
 
-  const handleClosed = () => {
-    dispatch(changeSlideUpObj({
-      type: 'HIDE_BOTTOM_ALERT',
 
-    }));
-
-    // if (modalizeRef.current) {
-    //   modalizeRef.current.close();
-    // }
-  };
 
   const onPressRight = () => {
     if (bottomSheetRef.current) {
       bottomSheetRef.current.close();
+    }
+
+    if (slideUpPanelConfig?.payload?.isShowTextInput) {
+      if (usernameText !== '') {
+        dispatch(chnageUsername(usernameText));
+      }
     }
 
     // props.hideSlidUpPanel();
@@ -80,6 +91,13 @@ const SideUpPanel = (props: any) => {
     stiffness: 500,
   });
 
+  const onChangeUsername =(value: string)=>{
+    console.log(value)
+    setUsername(value)
+  
+    slideUpPanelConfig?.payload?.onChangeUsername(value)
+  }
+
   // renders
   return (
     <BottomSheet
@@ -92,37 +110,42 @@ const SideUpPanel = (props: any) => {
       enablePanDownToClose={true}
     >
       <BottomSheetView style={styles.contentContainer}>
-
         <View style={{ paddingBottom: 50, paddingTop: 20, alignItems: 'center' }}>
           <Text style={[styles.titleSetle, { color: slideUpPanelConfig?.payload?.titleColor == '' ? colors.blackColor : slideUpPanelConfig?.payload?.titleColor }]}>
             {slideUpPanelConfig?.payload?.title}
           </Text>
         </View>
-
         <View style={{ alignContent: 'center', justifyContent: 'center', alignItems: 'center' }}>
           <Image
             style={styles.mainItemImgStyle}
             source={slideUpPanelConfig?.payload?.imgName}
           />
         </View>
-
-        {slideUpPanelConfig?.payload?.correctNumberOfAnswers == '' ?
-         null
+        {slideUpPanelConfig?.payload?.IsShowcorrectNumberOfAnswers == false ?
+          null
           :
           <View>
-          <Text style={{ color: 'black', alignSelf: 'center',fontSize: 16,fontFamily:'Quicksand-Medium' }}>
-            Number of correct Answers  : <Text style={[styles.ansNumStyle,{color:slideUpPanelConfig?.payload?.colorcorrectNumberOfAnswers==''?colors.blackColor:slideUpPanelConfig?.payload?.colorcorrectNumberOfAnswers}]}>{slideUpPanelConfig?.payload?.correctNumberOfAnswers}</Text>
-          </Text>
-        </View>
-          
-
+            <Text style={{ color: 'black', alignSelf: 'center', fontSize: 16, fontFamily: 'Quicksand-Medium' }}>
+              Number of correct Answers  : <Text style={[styles.ansNumStyle, { color: slideUpPanelConfig?.payload?.colorcorrectNumberOfAnswers == '' ? colors.blackColor : slideUpPanelConfig?.payload?.colorcorrectNumberOfAnswers }]}>{slideUpPanelConfig?.payload?.correctNumberOfAnswers}</Text>
+            </Text>
+          </View>
         }
 
         <Text style={styles.msgStyle}>
           {slideUpPanelConfig?.payload?.msg}
         </Text>
 
+        {slideUpPanelConfig?.payload?.isShowTextInput  ?
+          <TextInput
+            style={styles.input}
+            onChangeText={onChangeUsername}
+            value={usernameText}
 
+            placeholder="Enter Username"
+            maxLength={20}
+          />
+          : null
+        }
 
         {slideUpPanelConfig?.payload?.twoButtons == true ? (
           <View
@@ -139,7 +162,7 @@ const SideUpPanel = (props: any) => {
                   backgroundColor: colors.gray,
                 }}
 
-                onPress={() => handleClose()}
+                onPress={() => onPressLeft()}
                 title={slideUpPanelConfig?.payload?.leftBtnText}
                 disabled={false} />
             </View>
@@ -194,7 +217,17 @@ const styles = StyleSheet.create({
   },
   titleSetle: { fontWeight: 'bold', fontSize: 22,fontFamily:'Quicksand-Medium'},
   ansNumStyle:{fontSize:20},
-  msgStyle:{ color: 'black', alignSelf: 'center', paddingLeft: (height*5)/100,paddingRight:(height*5)/100, paddingTop:(height*5)/100, fontFamily:'Quicksand-Medium', fontSize:18 }
+  msgStyle:{ color: 'black', alignSelf: 'center', paddingLeft: (height*5)/100,paddingRight:(height*5)/100, paddingTop:(height*5)/100, fontFamily:'Quicksand-Medium', fontSize:18 },
+  input: {
+    height: 40,
+    width: 250,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 20,
+    color:colors.blackColor,
+   
+  },
 });
 
 
@@ -207,16 +240,20 @@ SideUpPanel.defaultProps = {
     correctNumberOfAnswers: '',
     colorcorrectNumberOfAnswers:'',
     msg: null,
+    isShowTextInput: false,
+    IsShowcorrectNumberOfAnswers: false,
     okText: null,
     okFn: () => { },
     btnCancel: () => { },
     twoButtons: false,
+    initUsername:'',
     leftBtnText: 'CANCEL',
     onPressLeft: () => { },
     rightBtnText: '',
     onPressRight: () => { },
     okBtnText: '',
     okPress: () => { },
+    onChangeUsername:() =>{}
   },
 };
 
