@@ -93,7 +93,8 @@ export const fetchDataSpellingMeaningApi = async (word: string) => {
         isShowTextInput,
         IsShowcorrectNumberOfAnswers,
         initUsername,
-        onChangeUsername
+        onChangeUsername,
+        snapToIndexValue:2
       },
     }));
   };
@@ -126,7 +127,40 @@ export const fetchDataSpellingMeaningApi = async (word: string) => {
         msg,
         twoButtons,
         imgName,
-        IsShowcorrectNumberOfAnswers:false
+        IsShowcorrectNumberOfAnswers:false,
+        snapToIndexValue:2
+      },
+    }));
+  };
+
+
+  export const showInstructionsSlideUpPanel = (
+    title: any,
+    titleColor:any,
+    msg: any,
+    twoButtons: any,
+    imgName: any,
+    okPress = () => {},
+    okBtnText: any,
+    IsShowcorrectNumberOfAnswers: boolean,
+    widthAddedFoeImage: boolean,
+    snapToIndexValue: any
+  ) => {
+    global.store.dispatch(changeSlideUpObj({
+      type: 'SHOW_BOTTOM_ALERT',
+      payload: {
+        alertType: 'SHOW_MARKS',
+        visible: true,
+        title,
+        titleColor,
+        msg,
+        twoButtons,
+        imgName,
+        okPress,
+        okBtnText,
+        IsShowcorrectNumberOfAnswers,
+        widthAddedFoeImage: true,
+        snapToIndexValue: 3
       },
     }));
   };

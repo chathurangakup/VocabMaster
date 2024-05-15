@@ -2,16 +2,18 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Animated, ImageBackground, SafeAreaView, ScrollView, Text, TouchableOpacity, View, Dimensions, KeyboardAvoidingView, TextInput, Keyboard, FlatList } from 'react-native';
 import Images from '../../config/Images.d';
 import TrackPlayer, { Capability } from 'react-native-track-player';
+import { BannerAd, BannerAdSize, InterstitialAd, AdEventType, TestIds } from 'react-native-google-mobile-ads';
 
 import { styles } from './Styles';
 import { AppBar } from '../../componants/AppBar';
 import { colors } from '../../config/styles';
 import Icons from 'react-native-vector-icons/AntDesign';
 import { changeLoadingStatus } from '../../slices/CommonSlice';
-import { changeBasicLessonInfo } from '../../screens/lessons/LessonSlice'
+import { changeAdvanceLessonInfo, changeBasicLessonInfo, changeIntermediateLessonInfo, changeMesteryLessonInfo } from '../../screens/lessons/LessonSlice'
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchDataSpellingMeaningApi, showSlideUpPanel } from '../../utils/utils';
 import { RootState } from '../../store';
+import { VOCABMASTER_BANNER_ID, VOCABM_INTESTRIAL } from '../../utils/constants';
 
 
 
@@ -35,19 +37,38 @@ const MainScreen = (props: any) => {
     const [remainingTime, setRemainingTime] = useState(initialTime);
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-    const { lessonsInfo, loading } = useSelector((state: RootState) => state.lessons);
+    const { lessonsBasicInfo, lessonsAdvanceInfo, lessonsIntermediateInfo, lessonsMesteryInfo } = useSelector((state: RootState) => state.lessons);
     const { isConnectedInternet } = useSelector((state: RootState) => state.common);
 
 
     const { width, height } = Dimensions.get('window');
 
-    const { spellingList, spellingListMainId } = props.route.params;
+    const { spellingList, spellingListMainId, mainCatogoryId } = props.route.params;
 
     const [progress, setProgress] = useState(new Animated.Value(0));
     const progressAnim = progress.interpolate({
         inputRange: [0, spellingList.length],
         outputRange: ['0%', '100%'],
     });
+
+    const [loaded, setLoaded] = useState(false);
+
+    const interstitial = InterstitialAd.createForAdRequest(VOCABM_INTESTRIAL, {
+        requestNonPersonalizedAdsOnly: true,
+        keywords: ['fashion', 'clothing'],
+      });
+
+      useEffect(() => {
+        const unsubscribe = interstitial.addAdEventListener(AdEventType.LOADED, () => {
+          setLoaded(true);
+        });
+    
+        // Start loading the interstitial straight away
+        interstitial.load();
+    
+        // Unsubscribe from events on unmount
+        return unsubscribe;
+      }, []);
 
 
     const setupPlayer = async () => {
@@ -71,12 +92,21 @@ const MainScreen = (props: any) => {
 
     useEffect(() => {
         setupPlayer()
-        console.log("iiiiii", JSON.stringify(lessonsInfo))
     }, []);
 
 
     const updateIsComplete = (id: any) => {
-        const updatedTasks = lessonsInfo.map((task: any) => {
+        var lessionInfo: any = []
+        if (mainCatogoryId == 1) {
+            lessionInfo = lessonsBasicInfo;
+        } else if (mainCatogoryId == 2) {
+            lessionInfo = lessonsIntermediateInfo;
+        } else if (mainCatogoryId == 3) {
+            lessionInfo = lessonsAdvanceInfo;
+        } else if (mainCatogoryId == 4) {
+            lessionInfo = lessonsMesteryInfo;
+        }
+        const updatedTasks = lessionInfo.map((task: any) => {
             // If the task's id matches the provided id, update its isComplete property to true
             if (task.id === id) {
                 return {
@@ -92,16 +122,16 @@ const MainScreen = (props: any) => {
 
     const SpellingCheckApiCall = async () => {
 
-        if(isConnectedInternet){
+        if (isConnectedInternet) {
             dispatch(changeLoadingStatus(true))
             const responce = await fetchDataSpellingMeaningApi(spellingList[currentQuectionIndex]?.title);
             console.log("responce user", JSON.stringify(responce))
             setvocabResponce(await responce);
             dispatch(changeLoadingStatus(false));
-        }else{
+        } else {
             setvocabResponce([]);
         }
-       
+
 
     }
 
@@ -111,7 +141,7 @@ const MainScreen = (props: any) => {
     }, [currentQuectionIndex])
 
     const clickSubmitButton = async () => {
-      
+
         clearInterval(intervalRef.current)
         console.log("spellingList oooo", spellingList[currentQuectionIndex]?.titleSpellin)
         if (spellingList[currentQuectionIndex]?.title == spellingText.toLowerCase()) {
@@ -129,26 +159,32 @@ const MainScreen = (props: any) => {
         let subtitle = '';
         let ImageShow = ''
         let titleColor = '';
-        let correctNumberOfAnswers=''
-        let colorcorrectNumberOfAnswers=''
+        let correctNumberOfAnswers = ''
+        let colorcorrectNumberOfAnswers = ''
         if (currentQuectionIndex + 1 >= spellingList.length) {
+            
+            if (!loaded) {
 
-            if (spellingList.length  == numberOfCorrectAns) {
+            }else{
+              interstitial.show()
+            }
+
+            if (spellingList.length == numberOfCorrectAns) {
                 title = "Congratulations"
                 subtitle = "Congratulations! 🎉 You've aced all the questions and enriched your vocabulary. Keep up the great work! 📚✨"
                 ImageShow = Images.Congratulation
                 titleColor = colors.green,
-                colorcorrectNumberOfAnswers = colors.green
-              
+                    colorcorrectNumberOfAnswers = colors.green
+
             } else {
                 title = "Sorry"
                 subtitle = "Sorry, it seems you missed some questions. Keep trying to improve your vocabulary! 💪📝",
-                ImageShow = Images.Sorry,
-                titleColor = colors.red,
-                colorcorrectNumberOfAnswers = colors.red
+                    ImageShow = Images.Sorry,
+                    titleColor = colors.red,
+                    colorcorrectNumberOfAnswers = colors.red
             }
 
-            correctNumberOfAnswers= numberOfCorrectAns.toString() +' / '+ spellingList.length.toString();
+            correctNumberOfAnswers = numberOfCorrectAns.toString() + ' / ' + spellingList.length.toString();
 
             showSlideUpPanel(
                 title,
@@ -158,12 +194,20 @@ const MainScreen = (props: any) => {
                 subtitle,
                 false,
                 ImageShow,
-                () => { 
-                    if(spellingList.length  == numberOfCorrectAns){
+                () => {
+                    if (spellingList.length == numberOfCorrectAns) {
                         const value = updateIsComplete(spellingListMainId)
-                        dispatch(changeBasicLessonInfo(value))
+                        if (mainCatogoryId == 1) {
+                            dispatch(changeBasicLessonInfo(value))
+                        } else if (mainCatogoryId == 2) {
+                            dispatch(changeIntermediateLessonInfo(value))
+                        } else if (mainCatogoryId == 3) {
+                            dispatch(changeAdvanceLessonInfo(value))
+                        } else if (mainCatogoryId == 4) {
+                            dispatch(changeMesteryLessonInfo(value))
+                        }
                         props.navigation.goBack()
-                    }else{
+                    } else {
                         props.navigation.goBack()
                     }
                 },
@@ -184,15 +228,6 @@ const MainScreen = (props: any) => {
             }).start();
 
         }
-
-
-        // if (currentQuectionIndex + 1 < spellingList.length) {
-
-        //     //setProgress(new Animated.Value(0));
-        // } else {
-        //     clearInterval(intervalRef.current); // Stop the current interval
-        //     setRemainingTime(0);
-        // }
 
     }
 
@@ -269,7 +304,7 @@ const MainScreen = (props: any) => {
             <View style={{ backgroundColor: 'white', margin: 15, borderRadius: 10, flex: 1 }}>
                 <View style={{ paddingTop: 10, paddingLeft: 10, paddingRight: 10, justifyContent: 'center', alignItems: 'center' }}>
 
-                    {data.phonetics[0]?.audio !== undefined ?
+                    {/* {data.phonetics[0]?.audio !== undefined ?
                         <View style={styles.speakerMainStyle}>
                             <TouchableOpacity disabled={speakerColorStatus == -1 ? false : true}>
                                 <Icons
@@ -304,7 +339,7 @@ const MainScreen = (props: any) => {
 
                         </View>
                         : null
-                    }
+                    } */}
                 </View>
                 <View>
                     {data.meanings.map((item: any, index1: number) =>
@@ -427,7 +462,7 @@ const MainScreen = (props: any) => {
                 style={styles.mainComp}>
                 <AppBar
                     navigation={props.navigation}
-                    title={'Speling'}
+                    title={'Vocab Master'}
                 />
                 <View style={styles.progressbarmainComp}>
                     <View style={{ flex: 3 }}>
@@ -441,7 +476,7 @@ const MainScreen = (props: any) => {
                 <View style={{ flex: 1, height: height }}>
                     <View style={styles.renderViewStyle}>
                         <ScrollView automaticallyAdjustKeyboardInsets={true} style={{ height: height }}>
-                            {vocabResponce.map((item: any, index: number) =>
+                            {vocabResponce?.map((item: any, index: number) =>
                                 <RenderMainView data={item} index={index} />
                             )}
                         </ScrollView>
@@ -464,6 +499,16 @@ const MainScreen = (props: any) => {
                     }
                 </View>
                 {renderSubmitButton()}
+                <BannerAd
+                    size={BannerAdSize.BANNER}
+                    unitId={VOCABMASTER_BANNER_ID}
+                    onAdLoaded={() => {
+                        console.log('Advert loaded');
+                    }}
+                    onAdFailedToLoad={error => {
+                        //console.error('Advert failed to load: ', error);
+                    }}
+                />
             </ImageBackground>
         </SafeAreaView>
     )

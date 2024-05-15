@@ -74,6 +74,15 @@ export const lessonsSlice = createSlice({
     changeBasicLessonInfo: (state: { lessonsBasicInfo: any; }, action: any ) => {
       state.lessonsBasicInfo =  action.payload
     },
+    changeIntermediateLessonInfo: (state: { lessonsIntermediateInfo: any; }, action: any ) => {
+      state.lessonsIntermediateInfo =  action.payload
+    },
+    changeAdvanceLessonInfo: (state: { lessonsAdvanceInfo: any; }, action: any ) => {
+      state.lessonsAdvanceInfo =  action.payload
+    },
+    changeMesteryLessonInfo: (state: { lessonsMesteryInfo: any; }, action: any ) => {
+      state.lessonsMesteryInfo =  action.payload
+    },
   },
   extraReducers: builder => {
     builder.addCase(getBasicLessionInfo.pending, state => {
@@ -136,6 +145,6 @@ export const lessonsSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { changeBasicLessonInfo  } = lessonsSlice.actions
+export const { changeBasicLessonInfo,changeIntermediateLessonInfo,changeAdvanceLessonInfo,changeMesteryLessonInfo } = lessonsSlice.actions
 
 export default lessonsSlice.reducer

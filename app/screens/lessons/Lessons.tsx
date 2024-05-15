@@ -1,15 +1,19 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { SafeAreaView, View, Text, Image, Animated, FlatList, TouchableOpacity, StyleSheet, Dimensions } from 'react-native'
+import { SafeAreaView, View, Text, Image, Animated, FlatList, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import {BannerAd, BannerAdSize,InterstitialAd, AdEventType, TestIds } from 'react-native-google-mobile-ads';
+
 import { AppBar } from '../../componants/AppBar'
 import { colors } from '../../config/styles';
 import Images from '../../config/Images.d';
-// import { lessionListArray } from '../../utils/constants';
 
+// import { lessionListArray } from '../../utils/constants';
 import { useDispatch, useSelector } from 'react-redux';
 import { getBasicLessionInfo, getIntermediateLessionInfo,getAdvanceLessionInfo, getMestryLessionInfo } from './LessonSlice';
 import { AppDispatch, RootState } from '../../store';
 import { Search } from '../../componants/Search';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { showInstructionsSlideUpPanel } from '../../utils/utils';
+import { HELP_SECTION_TEXT, LESSON_BANNER_ID } from '../../utils/constants';
 
 
 const { width, height } = Dimensions.get('window');
@@ -24,6 +28,8 @@ const Lessons = (props: any) => {
 
   const { mainId } = props.route.params;
 
+
+
   useEffect(() => {
     const filtered = lessionListArray.filter((item) =>
       item.title.toLowerCase().startsWith(searchText.toLowerCase())
@@ -33,7 +39,8 @@ const Lessons = (props: any) => {
   }, [searchText]);
 
   useEffect(() => {
-    if (lessonsBasicInfo.length !== 0 || lessonsIntermediateInfo.length !==0 || lessonsAdvanceInfo.length !==0 || lessonsMesteryInfo.length !==0 ) {
+    console.log()
+    if (lessonsBasicInfo?.length !== 0 || lessonsIntermediateInfo?.length !==0 || lessonsAdvanceInfo?.length !==0 || lessonsMesteryInfo?.length !==0 ) {
       if(mainId==1){
         setLessionListArray(lessonsBasicInfo);
         setFilteredData(lessonsBasicInfo)
@@ -51,6 +58,8 @@ const Lessons = (props: any) => {
         setFilteredData(lessonsMesteryInfo)
         console.log(JSON.stringify("lessonsMesteryInfo",lessonsMesteryInfo))
       }
+
+   
      
     } else {
       if(isConnectedInternet){
@@ -58,9 +67,24 @@ const Lessons = (props: any) => {
         dispatch(getIntermediateLessionInfo());
         dispatch(getAdvanceLessionInfo());
         dispatch(getMestryLessionInfo());
+
+        showInstructionsSlideUpPanel(
+          'Help',
+          colors.blackColor,
+          HELP_SECTION_TEXT,
+          false,
+          Images.FullImg,
+          () => {
+            
+          },
+          'OK',
+          false,
+          true,
+          3
+      )
       }
     } 
-  }, [lessonsBasicInfo])
+  }, [lessonsBasicInfo,lessonsAdvanceInfo, lessonsIntermediateInfo, lessonsMesteryInfo])
 
 
 
@@ -73,6 +97,7 @@ const Lessons = (props: any) => {
           props.navigation.navigate('mainScreen', {
             spellingList: titles.spellingList,
             spellingListMainId: titles.id,
+            mainCatogoryId: mainId
           });
         }}
         style={[styles.card, styles.shadowProp]}>
@@ -146,7 +171,16 @@ const Lessons = (props: any) => {
           renderItem={({ item, index, separators }) => <TitlesItem titles={item} />}
         />
       </View>
-  
+      <BannerAd
+        size={BannerAdSize.BANNER}
+        unitId={LESSON_BANNER_ID}
+        onAdLoaded={() => {
+          console.log('Advert loaded');
+        }}
+        onAdFailedToLoad={error => {
+         // console.error('Advert failed to load: ', error);
+        }}
+      />
     </SafeAreaView>
   )
 }

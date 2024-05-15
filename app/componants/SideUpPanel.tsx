@@ -12,7 +12,7 @@ const { width, height } = Dimensions.get('window');
 
 const SideUpPanel = (props: any) => {
   const { slideUpPanelConfig } = useSelector((state: RootState) => state.common);
-  const snapPoints = useMemo(() => ['25%', '50%', '75%', '100%'], [])
+  const snapPoints = useMemo(() => ['25%', '50%', '75%','90%', '100%'], [])
   const { username } = useSelector((state: RootState) => (state.login));
 
   const [usernameText, setUsername] = useState(username);
@@ -27,10 +27,10 @@ const SideUpPanel = (props: any) => {
 
 
   useEffect(() => {
-    console.log("slideUpPanelConfig pPpppppp", slideUpPanelConfig?.payload)
+    console.log("slideUpPanelConfig pPpppppp  9999", slideUpPanelConfig?.payload?.snapToIndexValue)
     // Update the document title using the browser API
     if (slideUpPanelConfig?.payload?.visible == true) {
-      bottomSheetRef.current?.snapToIndex(2);
+      bottomSheetRef.current?.snapToIndex(slideUpPanelConfig?.payload?.snapToIndexValue ==undefined ? -1 : slideUpPanelConfig?.payload?.snapToIndexValue);
     }
     setUsername(username);
   }, [slideUpPanelConfig]);
@@ -117,7 +117,7 @@ const SideUpPanel = (props: any) => {
         </View>
         <View style={{ alignContent: 'center', justifyContent: 'center', alignItems: 'center' }}>
           <Image
-            style={styles.mainItemImgStyle}
+            style={[styles.mainItemImgStyle,{width:  slideUpPanelConfig?.payload?.widthAddedFoeImage? width / 1.5 : width / 2.6, height:slideUpPanelConfig?.payload?.widthAddedFoeImage?  height / 4.5   : height / 5}]}
             source={slideUpPanelConfig?.payload?.imgName}
           />
         </View>
@@ -210,8 +210,8 @@ const styles = StyleSheet.create({
 
   },
   mainItemImgStyle: {
-    width: width / 2.6,
-    height: height / 5,
+    
+
     borderRadius: 10,
 
   },
@@ -253,7 +253,9 @@ SideUpPanel.defaultProps = {
     onPressRight: () => { },
     okBtnText: '',
     okPress: () => { },
-    onChangeUsername:() =>{}
+    onChangeUsername:() =>{},
+    widthAddedFoeImage: false,
+    snapToIndexValue: 0
   },
 };
 

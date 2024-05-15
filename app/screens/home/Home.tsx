@@ -80,7 +80,7 @@ const Home = (props: any) => {
           contentContainerStyle={{alignItems: 'center'}}
           showsVerticalScrollIndicator={false}
           numColumns={2}
-          // keyExtractor={item=> item.value}
+          keyExtractor={item=> item.title}
           renderItem={item => <SubjectItem items={item} />}
         />
       </View>

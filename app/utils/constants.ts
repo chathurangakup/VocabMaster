@@ -299,9 +299,19 @@ export const vocabResponce = [
 
   export const SPELLING_MEANING_API = 'https://api.dictionaryapi.dev/api/v2/entries/en/';
 
-export const BASIC_API_URL = 'https://firebasestorage.googleapis.com/v0/b/vocabmaster-a6dfd.appspot.com/o/basic.json?alt=media&token=f25345d3-48db-4f33-bb02-482b942218d1';
-export const INTERMEDIATE_API_URL  = 'https://firebasestorage.googleapis.com/v0/b/vocabmaster-a6dfd.appspot.com/o/intermediate.json?alt=media&token=d985f8c6-e6bb-4c92-be05-3e92efdde64a';
-export const ADVANCE_API_URL  = 'https://firebasestorage.googleapis.com/v0/b/vocabmaster-a6dfd.appspot.com/o/advance.json?alt=media&token=caea7e50-dc5a-4f19-950b-21b4cc6acfbf';
-export const MESTRY_API_URL  = 'https://firebasestorage.googleapis.com/v0/b/vocabmaster-a6dfd.appspot.com/o/mestry.json?alt=media&token=c4ea4e86-347c-4a19-ba18-44efee6e0a37';
+export const BASIC_API_URL = 'https://firebasestorage.googleapis.com/v0/b/vocabmaster-a6dfd.appspot.com/o/basic.json?alt=media&token=8a21650a-1879-401b-8780-91c8be56e012';
+export const INTERMEDIATE_API_URL  = 'https://firebasestorage.googleapis.com/v0/b/vocabmaster-a6dfd.appspot.com/o/intermediate.json?alt=media&token=767ddd55-07b5-421b-acdc-7ae7b1303949';
+export const ADVANCE_API_URL  = 'https://firebasestorage.googleapis.com/v0/b/vocabmaster-a6dfd.appspot.com/o/advance.json?alt=media&token=66ac8170-c797-4070-bede-43223f2de06f';
+export const MESTRY_API_URL  = 'https://firebasestorage.googleapis.com/v0/b/vocabmaster-a6dfd.appspot.com/o/mestry.json?alt=media&token=c4b5e4de-3092-41bd-8ed5-55c3d871af8c';
 
-export const VERSION_CHECK_API_URL  = 'https://firebasestorage.googleapis.com/v0/b/vocabmaster-a6dfd.appspot.com/o/version.json?alt=media&token=af0a0c88-3dad-47bc-ba83-63618ca4e0d9';
+export const VERSION_CHECK_API_URL  = 'https://firebasestorage.googleapis.com/v0/b/vocabmaster-a6dfd.appspot.com/o/version.json?alt=media&token=21c42c2a-bbe8-4379-a121-d5e3c1adba08';
+
+
+export const HELP_SECTION_TEXT='1.Read the definitions of the words and write the spellings below the text input. \n\n2. Then click the submit button. Whether your spelling is correct or incorrect, it will be displayed.You have 2 minutes for each answer. \n\n3.If you correctly answer all 10 words, the lesson page will show that the task has been completed.';
+
+
+
+export const LESSON_BANNER_ID='ca-app-pub-2295070264667994/4939243471';
+export const VOCABMASTER_BANNER_ID='ca-app-pub-2295070264667994/1159866284';
+export const VOCABM_INTESTRIAL='ca-app-pub-2295070264667994/2880142064';
+export const BACKINS='ca-app-pub-2295070264667994/2607759451'
