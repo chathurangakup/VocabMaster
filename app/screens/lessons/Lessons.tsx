@@ -14,6 +14,7 @@ import { Search } from '../../componants/Search';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { showInstructionsSlideUpPanel } from '../../utils/utils';
 import { HELP_SECTION_TEXT, LESSON_BANNER_ID } from '../../utils/constants';
+import { getVersionInfo } from '../../slices/CommonSlice';
 
 
 const { width, height } = Dimensions.get('window');
@@ -67,6 +68,7 @@ const Lessons = (props: any) => {
         dispatch(getIntermediateLessionInfo());
         dispatch(getAdvanceLessionInfo());
         dispatch(getMestryLessionInfo());
+        dispatch(getVersionInfo());
 
         showInstructionsSlideUpPanel(
           'Help',
@@ -128,7 +130,7 @@ const Lessons = (props: any) => {
               <Text style={styles.statusStyle}>{titles.isComplete ? 'completed' : 'pending'}</Text>
             </View>
 
-            <Icon name="navigate-next" size={20} color={colors.blackColor} style={{ paddingTop: 5 }} />
+            <Icon name="navigate-next" size={20} color={colors.blackColor} style={{ paddingTop: (height * 1.2) / 100, }} />
           </View>
 
         </View>
@@ -159,7 +161,6 @@ const Lessons = (props: any) => {
           legacyImplementation={true}
           style={{
             marginTop: -80,
-
             marginLeft: 10,
             marginRight: 10,
           }}
@@ -191,13 +192,13 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: '#fbf7f5',
     margin: 10,
-    borderWidth: 0.1,
+    borderWidth: 0.05,
     width: width / 1.1,
-    height: 65,
+    height: (height * 8.5) / 100,
     borderRadius: 20,
     paddingLeft: (height * 2.1) / 100,
     paddingRight: (height * 1.1) / 100,
-    paddingTop:(height * 2.1) / 100,
+    paddingTop:(height * 1.5) / 100,
     elevation: 5,
   },
   shadowProp: {

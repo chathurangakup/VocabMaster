@@ -8,19 +8,26 @@ import { changeLoadingStatus } from '../../slices/CommonSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import { RootState } from '../../store';
+import { getVersionInfo } from '../../slices/CommonSlice';
 
 const { width, height } = Dimensions.get('window');
 
 const Home = (props: any) => {
   const dispatch = useDispatch<any>();
   const { loading,username} = useSelector((state: RootState) => (state.login));
-
-
+  const { lessonsBasicInfo,lessonsIntermediateInfo,lessonsAdvanceInfo,lessonsMesteryInfo } = useSelector((state: RootState) => state.lessons);
+  const { isConnectedInternet } = useSelector((state: RootState) => state.common);
   const animated = new Animated.Value(0);
 
 
   useEffect(()=>{
     dispatch(changeLoadingStatus(false))
+    if (lessonsBasicInfo?.length == 0 || lessonsIntermediateInfo?.length ==0 || lessonsAdvanceInfo?.length ==0 || lessonsMesteryInfo?.length ==0 ) {
+      if(isConnectedInternet){
+        dispatch(getVersionInfo());
+      }
+    
+    }
   },[])
 
   const SubjectItem = ({items}:any) => {
@@ -48,16 +55,6 @@ const Home = (props: any) => {
 
     );
   };
-
-       // ref
-       const bottomSheetRef = useRef<BottomSheet>(null);
-
-       // callbacks
-       const handleSheetChanges = useCallback((index: number) => {
-         console.log('handleSheetChanges', index);
-       }, []);
-     
-       const snapPoints = useMemo(()=>['20%', '50%','70%'],[])
 
 
   return (

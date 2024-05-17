@@ -55,7 +55,8 @@ export const fetchDataSpellingMeaningApi = async (word: string) => {
         imgName,
         okPress,
         okBtnText,
-        IsShowcorrectNumberOfAnswers
+        IsShowcorrectNumberOfAnswers,
+        snapToIndexValue:2
       },
     }));
   };

@@ -23,6 +23,7 @@ const MainScreen = (props: any) => {
 
     const [currentQuectionIndex, setCurrentQuectionIndex] = useState(0);
     const [vocabResponce, setvocabResponce] = useState([])
+    const [vocabNoDataResponce, setvocabNoDataResponce]: any= useState({})
     const [spellingText, setSpellingText] = useState('');
     const [speakerColorStatus, setSpeakerColorStatus] = useState(-1);
     const [isDisableButton, setIsDisableButton] = useState(true);
@@ -54,21 +55,20 @@ const MainScreen = (props: any) => {
     const [loaded, setLoaded] = useState(false);
 
     const interstitial = InterstitialAd.createForAdRequest(VOCABM_INTESTRIAL, {
-        requestNonPersonalizedAdsOnly: true,
         keywords: ['fashion', 'clothing'],
-      });
+    });
 
-      useEffect(() => {
+    useEffect(() => {
         const unsubscribe = interstitial.addAdEventListener(AdEventType.LOADED, () => {
-          setLoaded(true);
+            setLoaded(true);
         });
-    
+
         // Start loading the interstitial straight away
         interstitial.load();
-    
+
         // Unsubscribe from events on unmount
         return unsubscribe;
-      }, []);
+    }, []);
 
 
     const setupPlayer = async () => {
@@ -126,7 +126,14 @@ const MainScreen = (props: any) => {
             dispatch(changeLoadingStatus(true))
             const responce = await fetchDataSpellingMeaningApi(spellingList[currentQuectionIndex]?.title);
             console.log("responce user", JSON.stringify(responce))
-            setvocabResponce(await responce);
+            if (responce?.length == undefined) {
+                setvocabNoDataResponce(responce)
+                setvocabResponce([]);
+              
+            } else {
+                setvocabResponce(responce);
+                setvocabNoDataResponce({})
+            }
             dispatch(changeLoadingStatus(false));
         } else {
             setvocabResponce([]);
@@ -162,11 +169,11 @@ const MainScreen = (props: any) => {
         let correctNumberOfAnswers = ''
         let colorcorrectNumberOfAnswers = ''
         if (currentQuectionIndex + 1 >= spellingList.length) {
-            
+
             if (!loaded) {
 
-            }else{
-              interstitial.show()
+            } else {
+                interstitial.show()
             }
 
             if (spellingList.length == numberOfCorrectAns) {
@@ -177,6 +184,7 @@ const MainScreen = (props: any) => {
                     colorcorrectNumberOfAnswers = colors.green
 
             } else {
+
                 title = "Sorry"
                 subtitle = "Sorry, it seems you missed some questions. Keep trying to improve your vocabulary! 💪📝",
                     ImageShow = Images.Sorry,
@@ -185,7 +193,7 @@ const MainScreen = (props: any) => {
             }
 
             correctNumberOfAnswers = numberOfCorrectAns.toString() + ' / ' + spellingList.length.toString();
-
+            console.log('lolo', spellingListMainId)
             showSlideUpPanel(
                 title,
                 titleColor,
@@ -226,6 +234,8 @@ const MainScreen = (props: any) => {
                 duration: 1000,
                 useNativeDriver: false,
             }).start();
+
+
 
         }
 
@@ -476,9 +486,37 @@ const MainScreen = (props: any) => {
                 <View style={{ flex: 1, height: height }}>
                     <View style={styles.renderViewStyle}>
                         <ScrollView automaticallyAdjustKeyboardInsets={true} style={{ height: height }}>
-                            {vocabResponce?.map((item: any, index: number) =>
-                                <RenderMainView data={item} index={index} />
-                            )}
+                            {/* {vocabResponce?.length !== undefined ? */}
+                                {vocabResponce?.map((item: any, index: number) =>
+                                    <RenderMainView data={item} index={index} />
+                                )}
+                                
+                                
+                            {vocabNoDataResponce?.title!==undefined?
+                             <View style={{flex:1, alignItems:'center', paddingTop: (height*10)/100}}>
+                             <Text style={{ color: colors.blackColor }}>
+                                     {vocabNoDataResponce?.title}
+                                     
+                                 </Text>
+                                 <Text style={{ color: colors.blackColor, padding:30 }}>
+                                     {vocabNoDataResponce?.message}
+                                     
+                                 </Text>
+                             </View>
+                             :
+                             null
+                            
+                            }
+                               
+                        
+                                  
+        
+
+
+                  
+
+                            
+
                         </ScrollView>
                     </View>
                     {isShowTextInput ?

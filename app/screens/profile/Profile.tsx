@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Dimensions, Image, SafeAreaView, StyleSheet, TouchableOpacity } from 'react-native'
+import { Dimensions, Image, Platform, SafeAreaView, StyleSheet, TouchableOpacity } from 'react-native'
 import { Text, View } from 'react-native-animatable';
 import database, { firebase } from '@react-native-firebase/database';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
-import { BannerAd, BannerAdSize, InterstitialAd, AdEventType, TestIds } from 'react-native-google-mobile-ads';
+import { BannerAd, BannerAdSize, InterstitialAd, AdEventType, TestIds, RewardedAd, RewardedAdEventType, } from 'react-native-google-mobile-ads';
+
 
 import { AppBar } from '../../componants/AppBar'
 import Images from '../../config/Images.d';
@@ -21,6 +22,18 @@ import { HELP_SECTION_TEXT } from '../../utils/constants';
 
 const { width, height } = Dimensions.get('window');
 
+const adREWARDEDUnitId = __DEV__ ? TestIds.REWARDED : 'ca-app-pub-2295070264667994/9136528848';
+const adIntestrialUnitId = __DEV__ ? TestIds.INTERSTITIAL : 'ca-app-pub-2295070264667994/2880142064';
+
+const rewarded = RewardedAd.createForAdRequest(adREWARDEDUnitId, {
+  // keywords: ['fashion', 'clothing'],
+});
+
+const interstitial = InterstitialAd.createForAdRequest(adIntestrialUnitId, {
+  // requestNonPersonalizedAdsOnly:true,
+  //  keywords: ['fashion', 'clothing'],
+});
+
 
 const Profile = (props: any) => {
   const dispatch = useDispatch<any>();
@@ -31,10 +44,29 @@ const Profile = (props: any) => {
 
   const [loaded, setLoaded] = useState(false);
 
-  const interstitial = InterstitialAd.createForAdRequest(HELP_SECTION_TEXT, {
-      requestNonPersonalizedAdsOnly: true,
-      keywords: ['fashion', 'clothing'],
+  useEffect(() => {
+    const unsubscribeLoaded = rewarded.addAdEventListener(RewardedAdEventType.LOADED, () => {
+      setLoaded(true);
     });
+    const unsubscribeEarned = rewarded.addAdEventListener(
+      RewardedAdEventType.EARNED_REWARD,
+      reward => {
+        console.log('User earned reward of ', reward);
+      },
+    );
+
+    // Start loading the rewarded ad straight away
+    rewarded.load();
+
+    // Unsubscribe from events on unmount
+    return () => {
+      unsubscribeLoaded();
+      unsubscribeEarned();
+    };
+  }, []);
+
+
+ 
 
     useEffect(() => {
       const unsubscribe = interstitial.addAdEventListener(AdEventType.LOADED, () => {
@@ -46,12 +78,11 @@ const Profile = (props: any) => {
   
       // Unsubscribe from events on unmount
       return unsubscribe;
-    }, []);
+    }, [loaded]);
 
     
   useFocusEffect(
     useCallback(() => {
-
       const onValueChange = database()
         .ref('/version')
         .on('value', snapshot => {
@@ -67,7 +98,7 @@ const Profile = (props: any) => {
 
       console.log("kkkkkk", versionInfo?.version, "pppppp", versionNumber)
 
-      return () => database().ref(`/version`).off('value', onValueChange);
+      return () =>  database().ref(`/version`).off('value', onValueChange)
     }, [versionNumber])
   )
 
@@ -99,8 +130,11 @@ const Profile = (props: any) => {
       },
     )
 
-    if (loaded) {
-      interstitial.show()
+    try {
+      interstitial.load();
+      interstitial?.show();
+    } catch (e) {
+      console.log(`${Platform.OS} interstitial load error: ${e}`);
     }
   }
 
@@ -124,17 +158,21 @@ const Profile = (props: any) => {
       true,
       'Cancel',
       () => {
-
-
-        if (loaded) {
-          interstitial.show()
+        try {
+          interstitial.load();
+          interstitial?.show();
+        } catch (e) {
+          console.log(`${Platform.OS} interstitial load error: ${e}`);
         }
       },
       'OK',
       () => {
         okPresslogoutBtn()
-        if (loaded) {
-          interstitial.show()
+        try {
+          rewarded.load();
+          rewarded.show();
+        } catch (e) {
+          console.log(`${Platform.OS} rewarded load error: ${e}`);
         }
       },
       Images.Logout,
@@ -153,10 +191,12 @@ const Profile = (props: any) => {
       dispatch(getAdvanceLessionInfo());
       dispatch(getMestryLessionInfo());
 
-      if (loaded) {
-        interstitial.show()
-      }
-      
+        try{
+          interstitial.load()
+          interstitial.show()
+        }catch(e){
+          console.log(`${Platform.OS} interstitial load error: ${e}`);
+        }  
     }
   
   }
@@ -185,9 +225,13 @@ const Profile = (props: any) => {
       false,
       Images.FullImg,
       () => {
-        if (loaded) {
-          interstitial.show()
+        try{
+          rewarded.load()
+          rewarded.show()
+        }catch(e){
+          console.log(`${Platform.OS} interstitial load error: ${e}`);
         }
+
       },
       'OK',
       false,
@@ -195,6 +239,10 @@ const Profile = (props: any) => {
       3
   )
   ]
+
+  if (!loaded) {
+    return null;
+  }
 
   return (
     <SafeAreaView style={styles.root}>

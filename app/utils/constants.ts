@@ -1,3 +1,4 @@
+import { TestIds } from "react-native-google-mobile-ads";
 import { colors } from "../config/styles";
 
 export const mainListArray = [
@@ -311,7 +312,7 @@ export const HELP_SECTION_TEXT='1.Read the definitions of the words and write th
 
 
 
-export const LESSON_BANNER_ID='ca-app-pub-2295070264667994/4939243471';
-export const VOCABMASTER_BANNER_ID='ca-app-pub-2295070264667994/1159866284';
-export const VOCABM_INTESTRIAL='ca-app-pub-2295070264667994/2880142064';
-export const BACKINS='ca-app-pub-2295070264667994/2607759451'
+export const LESSON_BANNER_ID=__DEV__ ? TestIds.BANNER :'ca-app-pub-2295070264667994/4939243471';
+export const VOCABMASTER_BANNER_ID=__DEV__ ? TestIds.BANNER :'ca-app-pub-2295070264667994/1159866284';
+export const VOCABM_INTESTRIAL=__DEV__ ? TestIds.INTERSTITIAL :'ca-app-pub-2295070264667994/2880142064';
+export const BACKINS=__DEV__ ? TestIds.INTERSTITIAL :'ca-app-pub-2295070264667994/2607759451'
