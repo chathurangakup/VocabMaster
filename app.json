@@ -1,4 +1,9 @@
 {
   "name": "VocabularyApp",
-  "displayName": "VocabularyApp"
+  "displayName": "VocabularyApp",
+  "react-native-google-mobile-ads": {
+    "android_app_id": "ca-app-pub-2295070264667994~5265211379",
+    "ios_app_id": "ca-app-pub-3940256099942544~1458002511"
+  }
+ 
 }

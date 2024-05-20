@@ -1,30 +1,41 @@
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 import { Text, View, SafeAreaView, StyleSheet, Image, Animated, Dimensions, FlatList, TouchableOpacity, ImageBackground } from 'react-native'
 import { AppBar } from '../../componants/AppBar';
 import Images from '../../config/Images.d';
 import { colors } from '../../config/styles';
-import { mainListArray } from '../../utils/constants';
+import { LESSON_BANNER_ID, VOCABMASTER_BANNER_ID, mainListArray } from '../../utils/constants';
 import { changeLoadingStatus } from '../../slices/CommonSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
+import { RootState } from '../../store';
+import { getVersionInfo } from '../../slices/CommonSlice';
+import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
 
 const { width, height } = Dimensions.get('window');
 
 const Home = (props: any) => {
   const dispatch = useDispatch<any>();
-
+  const { loading,username} = useSelector((state: RootState) => (state.login));
+  const { lessonsBasicInfo,lessonsIntermediateInfo,lessonsAdvanceInfo,lessonsMesteryInfo } = useSelector((state: RootState) => state.lessons);
+  const { isConnectedInternet } = useSelector((state: RootState) => state.common);
   const animated = new Animated.Value(0);
 
 
   useEffect(()=>{
     dispatch(changeLoadingStatus(false))
+    if (lessonsBasicInfo?.length == 0 || lessonsIntermediateInfo?.length ==0 || lessonsAdvanceInfo?.length ==0 || lessonsMesteryInfo?.length ==0 ) {
+      if(isConnectedInternet){
+        dispatch(getVersionInfo());
+      }
+    
+    }
   },[])
 
   const SubjectItem = ({items}:any) => {
     console.log("items",items)
     return (
-     
       <TouchableOpacity
-        activeOpacity={0.0}
+        activeOpacity={0.6}
         onPress={() => {
           props.navigation.navigate('lessons', {
             mainId: items.item.id,
@@ -37,8 +48,6 @@ const Home = (props: any) => {
           style={styles.mainItemImgStyle}
           source={Images.BgWave}
         />
-          
-
       </TouchableOpacity>
 
 
@@ -51,10 +60,11 @@ const Home = (props: any) => {
       <AppBar
         navigation={props.navigation}
         isShowBack={false}
-        title={'Main menu'}
+        title={'Vocab Master'}
       />
       <View style={styles.header}>
         <Image source={Images.SubjectTeach} style={styles.imgStyles} />
+        <Text style={styles.menuUsername}>Hi <Text style={styles.menuUsernameStyle}>{username}</Text></Text>
         <Text style={styles.menuTitle}>Expand your vocabulary and express yourself with confidence!</Text>
       </View>
 
@@ -65,10 +75,22 @@ const Home = (props: any) => {
           contentContainerStyle={{alignItems: 'center'}}
           showsVerticalScrollIndicator={false}
           numColumns={2}
-          // keyExtractor={item=> item.value}
+          keyExtractor={item=> item.title}
           renderItem={item => <SubjectItem items={item} />}
         />
       </View>
+
+      <BannerAd
+        size={BannerAdSize.BANNER}
+        unitId={LESSON_BANNER_ID}
+        onAdLoaded={() => {
+          console.log('Advert loaded');
+        }}
+        onAdFailedToLoad={error => {
+          //console.error('Advert failed to load: ', error);
+        }}
+      />
+
     </SafeAreaView>
   )
 }
@@ -101,15 +123,17 @@ const styles = StyleSheet.create({
   },
   imgStyles: {
     position: 'absolute',
-    opacity: 0.3,
+    opacity: 0.2,
     top: 40,
     left: 15,
     borderRadius: 200,
     width: 300,
     height: 300,
   },
-  menuTitle: { color: colors.blackColor, fontSize: 18, paddingTop: height/15,fontFamily:'Quicksand-Regular' },
-  mainItemName: {color: colors.blackColor, fontSize: 25, alignSelf: 'center', fontFamily:'Quicksand-Regular',marginTop:20},
+  menuTitle: { color: colors.blackColor, fontSize: 18, paddingTop: (height*2)/100,fontFamily:'Quicksand-Regular' },
+  menuUsername:{color: colors.blackColor, fontSize: 18, paddingTop: (height*5)/100,fontFamily:'Quicksand-Regular'},
+  menuUsernameStyle:{color: colors.blackColor, fontSize: 18, paddingTop: height/15,fontFamily:'Quicksand-Bold'},
+  mainItemName: {color: colors.blackColor, fontSize: 20, alignSelf: 'center', fontFamily:'Quicksand-Regular',marginTop:20},
   secondryItemName:{color: colors.blackColor, fontSize: 12, alignSelf: 'center', fontFamily:'Quicksand-Regular',marginTop:0},
 
 });

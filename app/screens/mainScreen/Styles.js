@@ -17,43 +17,20 @@ export const styles = StyleSheet.create({
     flex: 1,
     // paddingVertical: 40,
     // paddingHorizontal: 16,
-    backgroundColor: colors.primaryColor2,
+   backgroundColor:colors.lightOrange,
     position: 'relative',
   },
   quectionTextStyle: {
-    color: colors.white,
+    color: colors.blackColor,
     fontSize: 18,
     fontWeight: 'bold',
     opacity: 0.6,
-    marginRight: 2,
+    marginTop:5
   },
-  answerBtnstyle: {
-    borderWidth: 3,
-    borderColor: colors.green + '40',
-    backgroundColor: colors.green + '20',
-    paddingTop: 10,
-    paddingBottom: 10,
-    borderRadius: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    marginVertical: 10,
-  },
-  ansButton: {
-    borderWidth: 3,
-    paddingTop: 10,
-    paddingBottom: 10,
-    borderRadius: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    marginVertical: 10,
-  },
+
   animatedbarStyle: {
     height: 50,
-    borderRadius: 20,
+    borderRadius: 30,
     backgroundColor: colors.primaryColor1,
     position: 'relative',
     flex:1
@@ -162,13 +139,14 @@ export const styles = StyleSheet.create({
     color: colors.white,
     textAlign: 'center',
   },
-  inProgressTxtstyle: {color: colors.white, fontSize: 16, opacity: 0.6},
+  inProgressTxtstyle: {color: colors.white, fontSize: 16, opacity: 0.6, color:colors.blackColor},
   InprogressAnimated: {
     width: '100%',
     height: 50,
-    borderRadius: 20,
-    backgroundColor: colors.darkGreen,
-    marginTop: 5
+    borderRadius: 30,
+    backgroundColor: colors.lightTeal,
+    marginTop: 5,
+   
   },
   floatActionStyle: {
     flex: 1,
@@ -204,7 +182,7 @@ export const styles = StyleSheet.create({
     // flex: 6,
    paddingLeft: 30,
    paddingRight: 30,
-    bottom: 20,
+    bottom: 10,
     borderColor: '#555555',
     borderWidth: 0,
     borderRadius: 0,
@@ -212,7 +190,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   nxtBtnMain: {
-    padding: 10,
+    paddingBottom: 10,
   },
   reviewBtnMain: {
     flex: 1,
@@ -284,5 +262,13 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: colors.blackColor,
+  },
+  progressbarmainComp: { marginTop: 60, marginLeft: 20, marginRight: 20, flexDirection: 'row' },
+  timerStyle:{ fontSize: 30, fontWeight: 'bold', fontFamily:'Raleway-LightItalic', color:colors.blackColor },
+  renderViewStyle:{ flex: 1, backgroundColor: 'white', height: height / 1.75, margin: 15, borderRadius: 10, opacity:0.9},
+  speakerMainStyle:{ width: (height*10)/100, height: (height*10)/100, marginRight: (width * 5) / 100, justifyContent:'center', alignItems:'center', borderRadius: 40 },
+  contentContainer: {
+    flex: 1,
+    alignItems: 'center',
   },
 });

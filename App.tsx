@@ -5,7 +5,7 @@
  * @format
  */
 
-import React, { useState } from 'react';
+import React from 'react';
 import type { PropsWithChildren } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import {
@@ -19,6 +19,8 @@ import {
 } from 'react-native';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
+import { gestureHandlerRootHOC } from 'react-native-gesture-handler';
+
 
 import {
   navigationRef,
@@ -28,32 +30,36 @@ import {
 import Root from './app/screens/Root';
 
 import { persistor, store } from './app/store'
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 
 function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
+ 
   return (
     <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <SafeAreaView style={{ flex: 1 }}>
-          <View style={{ flex: 1 }}>
-            {/* <StatusBar backgroundColor={'red'} barStyle={'dark-content'} translucent={false} /> */}
-            <NavigationContainer
-              ref={navigationRef}
-              onReady={() =>
-              (routeNameRef.current =
-                navigationRef.current.getCurrentRoute().name)
-              }
-              onStateChange={() => onNavigationStateChange()}>
-              <Root />
-            </NavigationContainer>
-          </View>
-        </SafeAreaView>
-      </PersistGate>
+      <BottomSheetModalProvider>
+        <PersistGate loading={null} persistor={persistor}>
+          <SafeAreaView style={{ flex: 1 }}>
+            <View style={{ flex: 1 }}>
+              {/* <StatusBar backgroundColor={'red'} barStyle={'dark-content'} translucent={false} /> */}
+              <NavigationContainer
+                ref={navigationRef}
+                onReady={() =>
+                (routeNameRef.current =
+                  navigationRef.current.getCurrentRoute().name)
+                }
+                onStateChange={() => onNavigationStateChange()}>
+                <Root />
+               
+              </NavigationContainer>
+           
+            </View>
+          </SafeAreaView>
+        </PersistGate>
+      </BottomSheetModalProvider>
     </Provider>
   );
 }
 
 
-export default App;
+export default gestureHandlerRootHOC(App);

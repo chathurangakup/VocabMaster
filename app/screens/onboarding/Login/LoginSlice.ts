@@ -28,7 +28,7 @@ export const loginSlice = createSlice({
       state.isLogin =  action.payload
     },
     changeLoadingState: (state, action: PayloadAction<boolean>) =>{
-      state.loading = false
+      state.loading = action.payload
     },
     chnageUsername : (state, action: PayloadAction<string>) =>{
       state.username = action.payload

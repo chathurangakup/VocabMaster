@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Dimensions, StyleSheet, Image, ImageBackground, TouchableOpacity, SafeAreaView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
+import {BannerAd, BannerAdSize,InterstitialAd, AdEventType, TestIds } from 'react-native-google-mobile-ads';
 
 import Images from '../../../config/Images.d';
 import { colors } from '../../../config/styles';
@@ -9,6 +10,7 @@ import CustomButton from '../../../componants/CustomButton';
 import LottieView from 'lottie-react-native';
 import Lottie from '../../../config/Lottie';
 import { chnageUsername, changeIsLogin } from './LoginSlice'
+import { AppBar } from '../../../componants/AppBar';
 // import { RootState } from '../../../store';
 
 
@@ -28,38 +30,57 @@ const LoginScreen: React.FC<LoginScreenProps> = (props: any) => {
     //  dispatch(  changeLoadingState())
 
     const clickLogin = () => {
-        if (username !== '' && isErrorUserName == true) {
+        if (username !== '' && isErrorUserName == false) {
             dispatch(chnageUsername(username));
             dispatch(changeIsLogin(true));
         }
     };
 
     const changeUserName = (value: string) => {
-        setUsername(value)
-        setIsErrorUserName(true);
+        if(value==''){
+            setUsername(value)
+            setIsErrorUserName(true)
+        }else{
+            setUsername(value)
+            setIsErrorUserName(false);
+        }
+      
     }
 
     return (
         <SafeAreaView style={styles.container}>
+                <AppBar
+        navigation={props.navigation}
+        isShowBack={false}
+        title={'Login'}
+      />
             <ImageBackground source={Images.Welcome} style={styles.bgImgStyle}>
+        
                 <View style={{ height: '100%', marginTop: '20%' }}>
                     <LottieView source={Lottie.TeachingGirl} style={{ flex: 1 }} autoPlay loop />
+                    <Text style={{color:colors.blackColor, textAlign:'center', paddingTop:(height*10)/100, fontFamily:'Quicksand-Medium'}}>Please enter your username here.</Text>
                     <View style={styles.textInputStyles}>
+
+     
+                          
+
+
 
                         <TextInputCustom
                             value={username}
                             onChangeText={(value) => changeUserName(value)}
                             placeholder="Enter Username"
                         />
-                        {isErrorUserName ? null : <Text style={{ color: 'red', alignSelf: 'flex-start', paddingLeft: width / 6, paddingBottom: 20 }}>* Please enter username</Text>
-                        }
-
+                        {/* {isErrorUserName ? null : <Text style={{ color: 'red', alignSelf: 'flex-start', paddingLeft: width / 6, paddingBottom: 20 }}>* Please enter username</Text>
+                        } */}
+                      
                         <View style={{ width: width / 1.5, paddingTop: height / 20 }}>
-                            <CustomButton title="Continue" onPress={() => clickLogin()} buttonStyle={{ colors: 'red' }} disabled={false} />
+                            <CustomButton title="Login" onPress={() => clickLogin()} buttonStyle={[{backgroundColor:isErrorUserName ? colors.gray:colors.btnFillColor}]} disabled={isErrorUserName} />
                         </View>
                     </View>
                 </View>
             </ImageBackground>
+          
         </SafeAreaView>
 
 
@@ -89,7 +110,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignContent: 'center',
         alignItems: 'center',
-        paddingTop: height / 9
+        paddingTop:( height * 2)/100
     },
     bgImgStyle: { width: '100%', resizeMode: 'cover', backgroundColor: colors.blackColor, justifyContent: 'center', }
 });

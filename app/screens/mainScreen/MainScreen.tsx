@@ -1,19 +1,24 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { Animated, ImageBackground, SafeAreaView, ScrollView, Text, TouchableOpacity, View, Dimensions, KeyboardAvoidingView, TextInput, Keyboard, FlatList } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Animated, ImageBackground, SafeAreaView, ScrollView, Text, TouchableOpacity, View, Dimensions, KeyboardAvoidingView, TextInput, Keyboard, FlatList, Platform } from 'react-native';
 import Images from '../../config/Images.d';
 import TrackPlayer, { Capability } from 'react-native-track-player';
+import { BannerAd, BannerAdSize, InterstitialAd, AdEventType, TestIds } from 'react-native-google-mobile-ads';
 
 import { styles } from './Styles';
 import { AppBar } from '../../componants/AppBar';
 import { colors } from '../../config/styles';
 import Icons from 'react-native-vector-icons/AntDesign';
 import { changeLoadingStatus } from '../../slices/CommonSlice';
-import { changeBasicLessonInfo } from '../../screens/lessons/LessonSlice'
+import { changeAdvanceLessonInfo, changeBasicLessonInfo, changeIntermediateLessonInfo, changeMesteryLessonInfo } from '../../screens/lessons/LessonSlice'
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchDataSpellingMeaningApi } from '../../utils/utils';
+import { fetchDataSpellingMeaningApi, showSlideUpPanel } from '../../utils/utils';
 import { RootState } from '../../store';
+import { VOCABMASTER_BANNER_ID, VOCABM_INTESTRIAL } from '../../utils/constants';
 
 
+const interstitial = InterstitialAd.createForAdRequest(VOCABM_INTESTRIAL, {
+    // keywords: ['fashion', 'clothing'],
+});
 
 const MainScreen = (props: any) => {
 
@@ -21,6 +26,8 @@ const MainScreen = (props: any) => {
 
     const [currentQuectionIndex, setCurrentQuectionIndex] = useState(0);
     const [vocabResponce, setvocabResponce] = useState([])
+    const [vocabNoDataResponce, setvocabNoDataResponce]: any = useState({})
+    const [isBadResponce, setIsBadResponce]: any = useState(false)
     const [spellingText, setSpellingText] = useState('');
     const [speakerColorStatus, setSpeakerColorStatus] = useState(-1);
     const [isDisableButton, setIsDisableButton] = useState(true);
@@ -28,24 +35,42 @@ const MainScreen = (props: any) => {
     const [isSucessAns, setIsSuccessAns] = useState(false);
     const [isShowTextInput, setIsShowTextInput] = useState(true);
     const [isEndTimeout, setIsEndTimeout] = useState(false);
+    const [numberOfCorrectAns, setNumberOfCorrectAns] = useState(0);
 
     const initialTime = 120;
 
     const [remainingTime, setRemainingTime] = useState(initialTime);
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-    const { lessonsInfo, loading } = useSelector((state: RootState) => state.lessons);
+    const { lessonsBasicInfo, lessonsAdvanceInfo, lessonsIntermediateInfo, lessonsMesteryInfo } = useSelector((state: RootState) => state.lessons);
+    const { isConnectedInternet } = useSelector((state: RootState) => state.common);
 
 
     const { width, height } = Dimensions.get('window');
 
-    const { spellingList,spellingListMainId } = props.route.params;
+    const { spellingList, spellingListMainId, mainCatogoryId, spellingTitle } = props.route.params;
 
     const [progress, setProgress] = useState(new Animated.Value(0));
     const progressAnim = progress.interpolate({
         inputRange: [0, spellingList.length],
         outputRange: ['0%', '100%'],
     });
+
+    const [loaded, setLoaded] = useState(false);
+
+
+
+    useEffect(() => {
+        const unsubscribe = interstitial.addAdEventListener(AdEventType.LOADED, () => {
+            setLoaded(true);
+        });
+
+        // Start loading the interstitial straight away
+        interstitial.load();
+
+        // Unsubscribe from events on unmount
+        return unsubscribe;
+    }, []);
 
 
     const setupPlayer = async () => {
@@ -70,10 +95,20 @@ const MainScreen = (props: any) => {
     useEffect(() => {
         setupPlayer()
     }, []);
-    
+
 
     const updateIsComplete = (id: any) => {
-        const updatedTasks = lessonsInfo.map((task: any) => {
+        var lessionInfo: any = []
+        if (mainCatogoryId == 1) {
+            lessionInfo = lessonsBasicInfo;
+        } else if (mainCatogoryId == 2) {
+            lessionInfo = lessonsIntermediateInfo;
+        } else if (mainCatogoryId == 3) {
+            lessionInfo = lessonsAdvanceInfo;
+        } else if (mainCatogoryId == 4) {
+            lessionInfo = lessonsMesteryInfo;
+        }
+        const updatedTasks = lessionInfo.map((task: any) => {
             // If the task's id matches the provided id, update its isComplete property to true
             if (task.id === id) {
                 return {
@@ -83,63 +118,147 @@ const MainScreen = (props: any) => {
             }
             return task;
         });
-    
+
         return updatedTasks;
     };
 
+    function isEmpty(obj: object) {
+        for (const prop in obj) {
+            if (Object.hasOwn(obj, prop)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     const SpellingCheckApiCall = async () => {
-        dispatch(changeLoadingStatus(true))
-        const responce = await fetchDataSpellingMeaningApi(spellingList[currentQuectionIndex]?.title);
-        console.log("responce user", JSON.stringify(responce))
-        setvocabResponce(await responce);
-        dispatch(changeLoadingStatus(false));
+
+        if (isConnectedInternet) {
+            dispatch(changeLoadingStatus(true))
+            const responce = await fetchDataSpellingMeaningApi(spellingList[currentQuectionIndex]?.title);
+            console.log("responce user", JSON.stringify(responce))
+            if (responce?.length == undefined) {
+                console.log("responce  kkkkkk", responce)
+                if (isEmpty(responce)) {
+                    console.log("is empty responce  kkkkkki", responce)
+                    setIsBadResponce(true)
+                } else {
+                    setvocabNoDataResponce(responce)
+                    setvocabResponce([]);
+                }
+
+
+            } else {
+                setvocabResponce(responce);
+                setvocabNoDataResponce({})
+            }
+            dispatch(changeLoadingStatus(false));
+        } else {
+            setvocabResponce([]);
+        }
+
 
     }
 
 
     useEffect(() => {
-        console.log("ccccccccc", spellingList[currentQuectionIndex])
         SpellingCheckApiCall();
     }, [currentQuectionIndex])
 
-    const clickSubmitButton = async() => {
-        const value=updateIsComplete(1)
+    const clickSubmitButton = async () => {
 
-
-        dispatch(changeBasicLessonInfo(value))
-        // console.log("spellingList oooo", spellingList[currentQuectionIndex]?.titleSpellin)
-        // if (spellingList[currentQuectionIndex]?.title == spellingText.toLowerCase()) {
-        //     setIsSuccessAns(true)
-        //     setIsShowTextInput(false)
-        // } else {
-        //     setIsSuccessAns(false)
-        //     setIsShowTextInput(false)
-        // }
+        clearInterval(intervalRef.current)
+        console.log("spellingList oooo", spellingList[currentQuectionIndex]?.titleSpellin)
+        if (spellingList[currentQuectionIndex]?.title == spellingText.toLowerCase()) {
+            setIsSuccessAns(true)
+            setIsShowTextInput(false)
+            setNumberOfCorrectAns((numberOfCorrectAns) => numberOfCorrectAns + 1)
+        } else {
+            setIsSuccessAns(false)
+            setIsShowTextInput(false)
+        }
     }
 
     const clickNextButton = () => {
-        if (currentQuectionIndex + 1 < spellingList.length) {
+        let title = '';
+        let subtitle = '';
+        let ImageShow = ''
+        let titleColor = '';
+        let correctNumberOfAnswers = ''
+        let colorcorrectNumberOfAnswers = ''
+        if (currentQuectionIndex + 1 >= spellingList.length) {
+            try {
+                interstitial.load()
+                interstitial.show()
+            } catch (e) {
+                console.log(`${Platform.OS} interstitial load error: ${e}`);
+            }
+
+            if (spellingList.length == numberOfCorrectAns) {
+                title = "Congratulations"
+                subtitle = "Congratulations! 🎉 You've aced all the questions and enriched your vocabulary. Keep up the great work! 📚✨"
+                ImageShow = Images.Congratulation
+                titleColor = colors.green,
+                    colorcorrectNumberOfAnswers = colors.green
+
+            } else {
+
+                title = "Sorry"
+                subtitle = "Sorry, it seems you missed some questions. Keep trying to improve your vocabulary! 💪📝",
+                    ImageShow = Images.Sorry,
+                    titleColor = colors.red,
+                    colorcorrectNumberOfAnswers = colors.red
+            }
+
+            correctNumberOfAnswers = numberOfCorrectAns.toString() + ' / ' + spellingList.length.toString();
+            console.log('lolo', spellingListMainId)
+            showSlideUpPanel(
+                title,
+                titleColor,
+                correctNumberOfAnswers,
+                colorcorrectNumberOfAnswers,
+                subtitle,
+                false,
+                ImageShow,
+                () => {
+                    if (spellingList.length == numberOfCorrectAns) {
+                        const value = updateIsComplete(spellingListMainId)
+                        if (mainCatogoryId == 1) {
+                            dispatch(changeBasicLessonInfo(value))
+                        } else if (mainCatogoryId == 2) {
+                            dispatch(changeIntermediateLessonInfo(value))
+                        } else if (mainCatogoryId == 3) {
+                            dispatch(changeAdvanceLessonInfo(value))
+                        } else if (mainCatogoryId == 4) {
+                            dispatch(changeMesteryLessonInfo(value))
+                        }
+                        props.navigation.goBack()
+                    } else {
+                        props.navigation.goBack()
+                    }
+                },
+                'OK',
+                true,
+            )
+
+        } else {
             setIsShowTextInput(true);
             setCurrentQuectionIndex(currentQuectionIndex + 1);
             setSpellingText('');
             handleRestart()
             setIsEndTimeout(false)
             Animated.timing(progress, {
-                toValue: currentQuectionIndex + 1,
+                toValue: currentQuectionIndex + 2,
                 duration: 1000,
                 useNativeDriver: false,
             }).start();
-        } else {
-            clearInterval(intervalRef.current); // Stop the current interval
-            setRemainingTime(0);
+
+
+
         }
 
     }
 
-    // useEffect(()=>{
-    //     setTimeoutTime(20)
-
-    // },[timerValue])
 
     const renderProgressBar = () => {
         return (
@@ -150,34 +269,39 @@ const MainScreen = (props: any) => {
                             <View
                                 style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
                                 <Text style={styles.quectionTextStyle}>
-                                    {'Step '}{currentQuectionIndex + 1}{' '}
+                                    {'  Step '}{currentQuectionIndex + 1}{''}
                                 </Text>
                                 <Text style={styles.inProgressTxtstyle}> / {spellingList.length} </Text>
                             </View>
-                            <View>
-                                <Text style={styles.inProgressTxtstyle}>Vocabulary</Text>
-                            </View>
+
                         </View>
                         : null
-
-
                     }
 
 
                     <Animated.View style={[styles.animatedbarStyle, { width: progressAnim }]}>
+                        {currentQuectionIndex + 1 >= 3 ?
+                            <View style={{ padding: 6 }}>
+                                <View
+                                    style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+                                    <Text style={styles.quectionTextStyle}>
+                                        {'Step '}{currentQuectionIndex + 1}{' '}
+                                    </Text>
+                                    <Text style={styles.inProgressTxtstyle}> / {spellingList.length} </Text>
+                                </View>
 
-                        <View style={{ padding: 6 }}>
-                            <View
-                                style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-                                <Text style={styles.quectionTextStyle}>
-                                    {'Step '}{currentQuectionIndex + 1}{' '}
-                                </Text>
-                                <Text style={styles.inProgressTxtstyle}> / {spellingList.length} </Text>
                             </View>
-                            <View>
-                                <Text style={styles.inProgressTxtstyle}>Vocabulary</Text>
-                            </View>
-                        </View>
+                            :
+                            <View style={{ padding: 6 }}>
+                                <View
+                                    style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+                                    <Text style={styles.quectionTextStyle}>
+                                        {currentQuectionIndex + 1}{' '}
+                                    </Text>
+                                    <Text style={styles.inProgressTxtstyle}> / {spellingList.length} </Text>
+                                </View>
+
+                            </View>}
 
                     </Animated.View>
 
@@ -189,77 +313,85 @@ const MainScreen = (props: any) => {
 
 
     const renderSubmitButton = () => {
-
         return (
             <View style={styles.nextBtnRoot}>
                 <View style={styles.nxtBtnMain}>
                     <TouchableOpacity
-                        style={[styles.nextBtnStyles, { backgroundColor: isDisableButton ? colors.gray : colors.secondaryColor2, }]}
+                        style={[styles.nextBtnStyles, { backgroundColor: isDisableButton ? colors.gray : colors.btnFillColor, }]}
                         onPress={() => isShowTextInput ? clickSubmitButton() : clickNextButton()}
                         disabled={isDisableButton}>
                         <Text style={styles.nextBtnTextStyles}>{isShowTextInput ? 'Submit' : 'Next'}</Text>
                     </TouchableOpacity>
                 </View>
-
             </View>
         );
-
     };
+
+    const getOneNonEmptyAudio = (array: any[]) => {
+        // Find the first non-empty audio URL
+        const nonEmptyAudio = array.find((obj: { audio: string; }) => obj.audio && obj.audio !== '');
+        return nonEmptyAudio ? nonEmptyAudio.audio : null;
+    };
+
 
     const RenderMainView = ({ data, index }: any) => {
         return (
-            <View style={{ backgroundColor: 'white', margin: 15, borderRadius: 10 }}>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingTop: 10, paddingLeft: 10, paddingRight: 10 }}>
+            <View style={{ backgroundColor: 'white', margin: 15, borderRadius: 10, flex: 1 }}>
+                <View style={{ paddingTop: 10, paddingLeft: 10, paddingRight: 10, justifyContent: 'center', alignItems: 'center' }}>
 
-                    {data.phonetics[0]?.audio !== undefined ?
-                        <View style={{ width: 50, height: 50, marginRight: (width * 5) / 100 }}>
-                            <TouchableOpacity disabled={speakerColorStatus == -1 ? false : true}>
+                    {getOneNonEmptyAudio(data?.phonetics) !== null ?
+                        <View>
+                            <TouchableOpacity style={[styles.speakerMainStyle, { backgroundColor: speakerColorStatus == -1 ? colors.lightBlue : colors.lightOrange }]} disabled={speakerColorStatus == -1 ? false : true}
+                                onPress={async () => {
+                                    try {
+                                        console.log('lolo', data)
+                                        await TrackPlayer.reset();
+                                        const newObj = {
+                                            id: 1,
+                                            url: getOneNonEmptyAudio(data?.phonetics),
+                                        }
+                                        await TrackPlayer.add(newObj);
+                                        await TrackPlayer.play();
+                                        console.log('lolo', index)
+                                        setSpeakerColorStatus(index)
+                                        setTimeout(() => {
+                                            setSpeakerColorStatus(-1);
+                                        }, 5000);
+                                    } catch (e) {
+                                        console.log(e)
+                                    }
+
+                                }}>
                                 <Icons
                                     name="sound"
                                     size={30}
                                     disabled={speakerColorStatus == -1 ? false : true}
-                                    color={index == speakerColorStatus ? colors.red : colors.blackColor}
-                                    onPress={async () => {
+                                    color={index == speakerColorStatus ? colors.red : colors.green}
 
-                                        try {
-                                            console.log('lolo', index)
-                                            await TrackPlayer.reset();
-                                            const newObj = {
-                                                id: 1,
-                                                url: data.phonetics[0].audio,
-
-                                            }
-                                            await TrackPlayer.add(newObj);
-                                            await TrackPlayer.play();
-                                            console.log('lolo', index)
-                                            setSpeakerColorStatus(index)
-                                            setTimeout(() => {
-                                                setSpeakerColorStatus(-1);
-                                            }, 5000);
-                                        } catch (e) {
-                                            console.log(e)
-                                        }
-
-                                    }}
                                 />
                             </TouchableOpacity>
 
                         </View>
                         : null
-
-
                     }
+                    {/* {data.phonetics.length!==0 ?
+             
+                  
+                :
+                null
+                
+                } */}
 
                 </View>
                 <View>
                     {data.meanings.map((item: any, index1: number) =>
                         <View>
                             <View style={{ marginLeft: (width * 5) / 100, marginTop: (height * 1) / 100 }}>
-                                <Text style={{ fontSize: 25, color: colors.blackColor }}>{item.partOfSpeech}</Text>
+                                <Text style={{ fontSize: 25, color: colors.blackColor, fontFamily: 'Raleway-SemiBoldItalic' }}>{item.partOfSpeech}</Text>
                             </View>
                             <View>
-                                <Text style={{ paddingLeft: (width * 6) / 100, color: colors.blackColor }}>definition</Text>
-                                {item.definitions.map((item: any, index2: number) => <Text key={index2} style={{ paddingLeft: (width * 6) / 100, paddingTop: 10, color: colors.blackColor }}>{index2 + 1}. {item.definition}</Text>)}
+                                <Text style={{ paddingLeft: (width * 6) / 100, color: colors.blackColor, fontFamily: 'Raleway-SemiBoldItalic' }}>definition</Text>
+                                {item.definitions.map((item: any, index2: number) => <Text key={index2} style={{ paddingLeft: (width * 6) / 100, paddingTop: 10, color: colors.blackColor, fontFamily: 'Quicksand-Regular' }}>{index2 + 1}. {item.definition}</Text>)}
 
                             </View>
                         </View>
@@ -284,8 +416,6 @@ const MainScreen = (props: any) => {
     }, [spellingText])
 
 
-
-
     const SpellingInput = () => {
         return (
             <View>
@@ -306,7 +436,7 @@ const MainScreen = (props: any) => {
                         blurOnSubmit={true}
                         onSubmitEditing={() => { Keyboard.dismiss() }}
                         textAlign={'center'}
-                        style={{ padding: 5, fontSize: 30 }}
+                        style={{ padding: 5, fontSize: 30, color: colors.blackColor }}
                     />
                 </View>
             </View>
@@ -343,6 +473,34 @@ const MainScreen = (props: any) => {
         return `${minutes}:${seconds}`;
     };
 
+
+    const StatusComponent = (statusValue: string, spelling: string, correctAnsValue: string, statusColor: boolean) => {
+        return (
+            <View style={{ backgroundColor: 'white', borderRadius: 10, width: (width * 80) / 100, justifyContent: "center", alignItems: 'center', padding: 10 }}>
+                <View style={{ flexDirection: 'row', alignContent: 'center', }}>
+                    <Text style={{ flex: 1, paddingLeft: 10, color: colors.blackColor }}>Status</Text>
+                    <Text style={{ flex: 0.1, color: colors.blackColor }}> : </Text>
+                    <Text style={{ fontSize: 18, color: statusColor ? colors.red : colors.green, flex: 0.9 }}>{statusValue}</Text>
+                </View>
+                <View style={{ flexDirection: 'row' }}>
+                    <Text style={{ flex: 1, paddingLeft: 10, color: colors.blackColor }}>Correct Word</Text>
+                    <Text style={{ flex: 0.1, color: colors.blackColor }}> : </Text>
+                    <Text style={{ fontSize: 18, color: statusColor ? colors.red : colors.green, flex: 0.9, fontFamily: 'Quicksand-Bold' }}>{spelling}</Text>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
+                    <Text style={{ flex: 1, paddingLeft: 10, color: colors.blackColor }}>Number of Correct Answers</Text>
+                    <Text style={{ flex: 0.1, paddingTop: 5, color: colors.blackColor }}> : </Text>
+                    <Text style={{ fontSize: 18, color: statusColor ? colors.red : colors.green, flex: 0.9, paddingTop: 5 }}>{numberOfCorrectAns} {'/ 10'}</Text>
+                </View>
+            </View>
+        )
+    }
+
+    const onPressRetry = () => {
+        SpellingCheckApiCall();
+        setIsBadResponce(false)
+    }
+
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <ImageBackground
@@ -351,45 +509,85 @@ const MainScreen = (props: any) => {
                 style={styles.mainComp}>
                 <AppBar
                     navigation={props.navigation}
-                    title={'Speling'}
+                    title={spellingTitle}
                 />
-                <View style={{ marginTop: 60, marginLeft: 20, marginRight: 20, flexDirection: 'row' }}>
+                <View style={styles.progressbarmainComp}>
                     <View style={{ flex: 3 }}>
                         {renderProgressBar()}
                     </View>
-                    <View style={{ flex: 1 }}>
-                        <Text style={{ fontSize: 25, fontWeight: 'bold' }}>{formatTime(remainingTime)}</Text>
-                        {/* <Timer initialTime={timerValue} onEnd={() => endTimer()} onRestart={()=>handleRestart()} /> */}
+                    <View style={{ flex: 1, paddingTop: 10, paddingLeft: 5 }}>
+                        <Text style={styles.timerStyle}>{formatTime(remainingTime)}</Text>
                     </View>
                 </View>
 
-                <ScrollView automaticallyAdjustKeyboardInsets={true}>
-                    <View style={{ flex: 1, backgroundColor: 'white', height: height / 1.7, margin: 15, borderRadius: 10 }}>
-                        <ScrollView style={{ flex: 1 }}>
-                            {vocabResponce.map((item: any, index: number) =>
+                <View style={{ flex: 1, height: height }}>
+                    <View style={styles.renderViewStyle}>
+                        <ScrollView automaticallyAdjustKeyboardInsets={true} style={{ height: height }}>
+                            {/* {vocabResponce?.length !== undefined ? */}
+                            {vocabResponce?.map((item: any, index: number) =>
                                 <RenderMainView data={item} index={index} />
                             )}
+
+
+                            {vocabNoDataResponce?.title !== undefined ?
+                                <View style={{ flex: 1, alignItems: 'center', paddingTop: (height * 10) / 100 }}>
+                                    <Text style={{ color: colors.blackColor }}>
+                                        {vocabNoDataResponce?.title}
+                                    </Text>
+                                    <Text style={{ color: colors.blackColor, padding: 30 }}>
+                                        {vocabNoDataResponce?.message}
+                                    </Text>
+                                </View>
+                                :
+                                null
+                            }
+
+
+                            {isBadResponce == true ?
+                                <View style={{ flex: 1, alignItems: 'center', paddingTop: (height * 10) / 100 }}>
+                                    <TouchableOpacity onPress={() => onPressRetry()}>
+                                        <Text style={{ color: colors.blackColor }}>
+                                            Please Retry
+                                        </Text>
+                                    </TouchableOpacity>
+
+
+                                </View>
+                                :
+                                null
+                            }
+
+
                         </ScrollView>
                     </View>
                     {isShowTextInput ?
                         SpellingInput()
                         :
-                        <View>
+                        <View style={{ flex: 0.3, justifyContent: 'center', alignItems: 'center' }}>
                             {
                                 isEndTimeout == true ?
-                                    <Text>Time out Correct ans is + {spellingList[currentQuectionIndex]?.title}</Text>
+                                    StatusComponent('Timeout', spellingList[currentQuectionIndex]?.title, '1/10', true)
                                     :
                                     isSucessAns ?
-                                        <Text>Correct</Text>
+                                        StatusComponent('Correct', spellingList[currentQuectionIndex]?.title, '1/10', false)
                                         :
-                                        <Text>wrong and corret and is {spellingList[currentQuectionIndex]?.title}</Text>
-
+                                        StatusComponent('Wrong', spellingList[currentQuectionIndex]?.title, '1/10', true)
 
                             }
                         </View>
                     }
-                </ScrollView>
+                </View>
                 {renderSubmitButton()}
+                <BannerAd
+                    size={BannerAdSize.BANNER}
+                    unitId={VOCABMASTER_BANNER_ID}
+                    onAdLoaded={() => {
+                        console.log('Advert loaded');
+                    }}
+                    onAdFailedToLoad={error => {
+                        //console.error('Advert failed to load: ', error);
+                    }}
+                />
             </ImageBackground>
         </SafeAreaView>
     )

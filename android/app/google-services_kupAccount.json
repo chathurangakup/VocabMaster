@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "224400453425",
-    "project_id": "vocabmaster-a6dfd",
-    "storage_bucket": "vocabmaster-a6dfd.appspot.com"
+    "project_number": "513043776117",
+    "project_id": "vocapp-f579a",
+    "storage_bucket": "vocapp-f579a.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:224400453425:android:ecba7e61b00673b3624a10",
+        "mobilesdk_app_id": "1:513043776117:android:6860d16da5c74ecf6c2e3c",
         "android_client_info": {
           "package_name": "com.chathuranga.vocabmaster"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDfMlSDkckKA4LVZ63ccSJ1jebeXMktVuI"
+          "current_key": "AIzaSyAPso3gOQ3IavcvbydJMghtyKyE_5zjjpw"
         }
       ],
       "services": {
