@@ -266,7 +266,7 @@ export const styles = StyleSheet.create({
   progressbarmainComp: { marginTop: 60, marginLeft: 20, marginRight: 20, flexDirection: 'row' },
   timerStyle:{ fontSize: 30, fontWeight: 'bold', fontFamily:'Raleway-LightItalic', color:colors.blackColor },
   renderViewStyle:{ flex: 1, backgroundColor: 'white', height: height / 1.75, margin: 15, borderRadius: 10, opacity:0.9},
-  speakerMainStyle:{ width: (height*10)/100, height: (height*10)/100, marginRight: (width * 5) / 100, backgroundColor:colors.lightOrange, justifyContent:'center', alignItems:'center', borderRadius: 40 },
+  speakerMainStyle:{ width: (height*10)/100, height: (height*10)/100, marginRight: (width * 5) / 100, justifyContent:'center', alignItems:'center', borderRadius: 40 },
   contentContainer: {
     flex: 1,
     alignItems: 'center',

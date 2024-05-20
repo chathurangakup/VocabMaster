@@ -287,44 +287,9 @@
             {"id": 160, "title": "month"}
         ]
     },
+ 
     {
         "id": 17,
-        "title": "Shapes",
-        "subTitle": "Recognize common geometric shapes.",
-        "isComplete": false,
-        "spellingList": [
-            {"id": 161, "title": "circle"},
-            {"id": 162, "title": "square"},
-            {"id": 163, "title": "triangle"},
-            {"id": 164, "title": "rectangle"},
-            {"id": 165, "title": "oval"},
-            {"id": 166, "title": "heart"},
-            {"id": 167, "title": "star"},
-            {"id": 168, "title": "diamond"},
-            {"id": 169, "title": "crescent"},
-            {"id": 170, "title": "pentagon"}
-        ]
-    },
-    {
-        "id": 18,
-        "title": "Countries",
-        "subTitle": "Learn about different countries around the world.",
-        "isComplete": false,
-        "spellingList": [
-            {"id": 171, "title": "USA"},
-            {"id": 172, "title": "Canada"},
-            {"id": 173, "title": "UK"},
-            {"id": 174, "title": "France"},
-            {"id": 175, "title": "Germany"},
-            {"id": 176, "title": "Italy"},
-            {"id": 177, "title": "Japan"},
-            {"id": 178, "title": "China"},
-            {"id": 179, "title": "Brazil"},
-            {"id": 180, "title": "India"}
-        ]
-    },
-    {
-        "id": 19,
         "title": "Vegetables",
         "subTitle": "Explore various nutritious vegetables.",
         "isComplete": false,
@@ -342,7 +307,7 @@
         ]
     },
     {
-        "id": 20,
+        "id": 18,
         "title": "Feelings",
         "subTitle": "Identify and understand different emotions.",
         "isComplete": false,
@@ -357,6 +322,114 @@
             {"id": 198, "title": "confused"},
             {"id": 199, "title": "nervous"},
             {"id": 200, "title": "proud"}
+        ]
+    },
+    {
+        "id": 19,
+        "title": "Emotions",
+        "subTitle": "Learn basic emotions commonly experienced in daily life.",
+        "isComplete": false,
+        "spellingList": [
+            {"id": 1, "title": "happy"},
+            {"id": 2, "title": "sad"},
+            {"id": 3, "title": "angry"},
+            {"id": 4, "title": "excited"},
+            {"id": 5, "title": "afraid"},
+            {"id": 6, "title": "surprised"},
+            {"id": 7, "title": "calm"},
+            {"id": 8, "title": "proud"},
+            {"id": 9, "title": "disgusted"},
+            {"id": 10, "title": "confused"}
+        ]
+    },
+    {
+        "id": 20,
+        "title": "Vehicles",
+        "subTitle": "Learn basic vehicles commonly seen on roads and streets.",
+        "isComplete": false,
+        "spellingList": [
+            {"id": 1, "title": "car"},
+            {"id": 2, "title": "bus"},
+            {"id": 3, "title": "truck"},
+            {"id": 4, "title": "bike"},
+            {"id": 5, "title": "motorcycle"},
+            {"id": 6, "title": "van"},
+            {"id": 7, "title": "scooter"},
+            {"id": 8, "title": "train"},
+            {"id": 9, "title": "taxi"},
+            {"id": 10, "title": "ambulance"}
+        ]
+    },
+    {
+        "id": 21,
+        "title": "Financial Terms",
+        "subTitle": "Learn basic financial terms commonly used in personal finance.",
+        "isComplete": false,
+        "spellingList": [
+            {"id": 1, "title": "income"},
+            {"id": 2, "title": "expense"},
+            {"id": 3, "title": "budget"},
+            {"id": 4, "title": "savings"},
+            {"id": 5, "title": "debt"},
+            {"id": 6, "title": "credit"},
+            {"id": 7, "title": "investment"},
+            {"id": 8, "title": "loan"},
+            {"id": 9, "title": "interest"},
+            {"id": 10, "title": "insurance"}
+        ]
+    },
+    {
+        "id": 22,
+        "title": "Fields of Science",
+        "subTitle": "Learn about basic fields of science and their fundamental concepts.",
+        "isComplete": false,
+        "spellingList": [
+            {"id": 1, "title": "biology"},
+            {"id": 2, "title": "chemistry"},
+            {"id": 3, "title": "physics"},
+            {"id": 4, "title": "geology"},
+            {"id": 5, "title": "astronomy"},
+            {"id": 6, "title": "ecology"},
+            {"id": 7, "title": "botany"},
+            {"id": 8, "title": "zoology"},
+            {"id": 9, "title": "meteorology"},
+            {"id": 10, "title": "genetics"}
+        ]
+    },
+    {
+        "id": 23,
+        "title": "Adjectives",
+        "subTitle": "Learn basic adjectives commonly used in everyday language.",
+        "isComplete": false,
+        "spellingList": [
+            {"id": 1, "title": "happy"},
+            {"id": 2, "title": "sad"},
+            {"id": 3, "title": "angry"},
+            {"id": 4, "title": "excited"},
+            {"id": 5, "title": "calm"},
+            {"id": 6, "title": "tired"},
+            {"id": 7, "title": "brave"},
+            {"id": 8, "title": "shy"},
+            {"id": 9, "title": "smart"},
+            {"id": 10, "title": "kind"}
+        ]
+    },
+    {
+        "id": 24,
+        "title": "Items You Buy",
+        "subTitle": "Learn basic items commonly purchased for everyday use.",
+        "isComplete": false,
+        "spellingList": [
+            {"id": 1, "title": "bread"},
+            {"id": 2, "title": "milk"},
+            {"id": 3, "title": "eggs"},
+            {"id": 4, "title": "butter"},
+            {"id": 5, "title": "vegetables"},
+            {"id": 6, "title": "fruit"},
+            {"id": 7, "title": "rice"},
+            {"id": 8, "title": "pasta"},
+            {"id": 9, "title": "chicken"},
+            {"id": 10, "title": "beef"}
         ]
     }
 ]

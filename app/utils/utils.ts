@@ -14,7 +14,8 @@ export const fetchDataSpellingMeaningApi = async (word: string) => {
       const response = await fetch(SPELLING_MEANING_API+word);
      
       const json = await response.json();
-      console.log("responce json", json)
+      console.log("responce json2", response.status)
+     
        //dispatch(changeLoadingStatus(false));
       return json
       

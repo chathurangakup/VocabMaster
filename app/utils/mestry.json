@@ -1,38 +1,435 @@
 [
     {
         "id": 1,
-        "title": "Transportation",
-        "subTitle": "Learn about different modes of transportation.",
+        "title": "Animals",
+        "subTitle": "Master rare and scientific animal names.",
         "isComplete": false,
         "spellingList": [
-            {"id": 91, "title": "car"},
-            {"id": 92, "title": "bus"},
-            {"id": 93, "title": "bike"},
-            {"id": 94, "title": "train"},
-            {"id": 95, "title": "boat"},
-            {"id": 96, "title": "plane"},
-            {"id": 97, "title": "walk"},
-            {"id": 98, "title": "drive"},
-            {"id": 99, "title": "road"},
-            {"id": 100, "title": "wheel"}
+            {"id": 1, "title": "axolotl"},
+            {"id": 2, "title": "quokka"},
+            {"id": 3, "title": "echidna"},
+            {"id": 4, "title": "okapi"},
+            {"id": 5, "title": "pangolin"},
+            {"id": 6, "title": "tarsier"},
+            {"id": 7, "title": "kakapo"},
+            {"id": 8, "title": "numbat"},
+            {"id": 9, "title": "dugong"},
+            {"id": 10, "title": "saiga"}
         ]
     },
     {
         "id": 2,
-        "title": "School Supplies",
-        "subTitle": "Discover essential items used in school.",
+        "title": "Fruits",
+        "subTitle": "Master rare and exotic fruit names.",
         "isComplete": false,
         "spellingList": [
-            {"id": 101, "title": "book"},
-            {"id": 102, "title": "pen"},
-            {"id": 103, "title": "pencil"},
-            {"id": 104, "title": "eraser"},
-            {"id": 105, "title": "ruler"},
-            {"id": 106, "title": "backpack"},
-            {"id": 107, "title": "notebook"},
-            {"id": 108, "title": "marker"},
-            {"id": 109, "title": "glue"},
-            {"id": 110, "title": "scissors"}
+            {"id": 1, "title": "apple"},
+            {"id": 2, "title": "rambutan"},
+            {"id": 3, "title": "orange"},
+            {"id": 4, "title": "grapes"},
+            {"id": 5, "title": "cherimoya"},
+            {"id": 6, "title": "longan"},
+            {"id": 7, "title": "mangosteen"},
+            {"id": 8, "title": "sapodilla"},
+            {"id": 9, "title": "soursop"},
+            {"id": 10, "title": "ackee"}
+        ]
+    },
+    {
+        "id": 3,
+        "title": "Colors",
+        "subTitle": "Master rare and exotic color names.",
+        "isComplete": false,
+        "spellingList": [
+            {"id": 1, "title": "amaranth"},
+            {"id": 2, "title": "poppy"},
+            {"id": 3, "title": "gamboge"},
+            {"id": 4, "title": "malachite"},
+            {"id": 5, "title": "wisteria"},
+            {"id": 6, "title": "alabaster"},
+            {"id": 7, "title": "emerald green"},
+            {"id": 8, "title": "grey"},
+            {"id": 9, "title": "glaucous"},
+            {"id": 10, "title": "heliotrope"}
+        ]
+    },
+    {
+        "id": 4,
+        "title": "Family",
+        "subTitle": "Master rare and specialized family relationship terms.",
+        "isComplete": false,
+        "spellingList": [
+            {"id": 1, "title": "matriarch"},
+            {"id": 2, "title": "patriarch"},
+            {"id": 3, "title": "lineage"},
+            {"id": 4, "title": "descendant"},
+            {"id": 5, "title": "ancestry"},
+            {"id": 6, "title": "genealogy"},
+            {"id": 7, "title": "kinship"},
+            {"id": 8, "title": "progeny"},
+            {"id": 9, "title": "sibling"},
+            {"id": 10, "title": "forebear"}
+        ]
+    },
+    {
+        "id": 5,
+        "title": "Body Parts",
+        "subTitle": "Master rare and specialized body part terms.",
+        "isComplete": false,
+        "spellingList": [
+            {"id": 1, "title": "phalanx"},
+            {"id": 2, "title": "metatarsal"},
+            {"id": 3, "title": "sternum"},
+            {"id": 4, "title": "scapula"},
+            {"id": 5, "title": "patella"},
+            {"id": 6, "title": "clavicle"},
+            {"id": 7, "title": "mandible"},
+            {"id": 8, "title": "humerus"},
+            {"id": 9, "title": "femur"},
+            {"id": 10, "title": "tibia"}
+        ]
+    },
+    {
+        "id": 6,
+        "title": "Numbers",
+        "subTitle": "Master rare and specialized numerical terms.",
+        "isComplete": false,
+        "spellingList": [
+            {"id": 1, "title": "billion"},
+            {"id": 2, "title": "trillion"},
+            {"id": 3, "title": "quadrillion"},
+            {"id": 4, "title": "quintillion"},
+            {"id": 5, "title": "googol"},
+            {"id": 6, "title": "googolplex"},
+            {"id": 7, "title": "centillion"},
+            {"id": 8, "title": "duodecillion"},
+            {"id": 9, "title": "undecillion"},
+            {"id": 10, "title": "nonillion"}
+        ]
+    },
+    {
+        "id": 7,
+        "title": "Shapes",
+        "subTitle": "Master rare and specialized shapes.",
+        "isComplete": false,
+        "spellingList": [
+            {"id": 1, "title": "icosahedron"},
+            {"id": 2, "title": "cube"},
+            {"id": 3, "title": "torus"},
+            {"id": 4, "title": "octahedron"},
+            {"id": 5, "title": "cube"},
+            {"id": 6, "title": "hexahedron"},
+            {"id": 7, "title": "right triangle"},
+            {"id": 8, "title": "prism"},
+            {"id": 9, "title": "tetrahedron"},
+            {"id": 10, "title": "nonagon"}
+        ]
+    },
+    {
+        "id": 8,
+        "title": "Clothing",
+        "subTitle": "Master rare and specialized clothing terms.",
+        "isComplete": false,
+        "spellingList": [
+            {"id": 1, "title": "kilt"},
+            {"id": 2, "title": "kimono"},
+            {"id": 3, "title": "sarong"},
+            {"id": 4, "title": "dirndl"},
+            {"id": 5, "title": "jumpsuit"},
+            {"id": 6, "title": "muumuu"},
+            {"id": 7, "title": "tog"},
+            {"id": 8, "title": "tunic"},
+            {"id": 9, "title": "tabard"},
+            {"id": 10, "title": "gaiters"}
+        ]
+    },
+    {
+        "id": 9,
+        "title": "Weather",
+        "subTitle": "Master rare and specialized weather terms.",
+        "isComplete": false,
+        "spellingList": [
+            {"id": 1, "title": "haboob"},
+            {"id": 2, "title": "williwaw"},
+            {"id": 3, "title": "derecho"},
+            {"id": 4, "title": "petrichor"},
+            {"id": 5, "title": "anticyclone"},
+            {"id": 6, "title": "solar flare"},
+            {"id": 7, "title": "fedora"},
+            {"id": 8, "title": "graupel"},
+            {"id": 9, "title": "virga"},
+            {"id": 10, "title": "sundog"}
+        ]
+    },
+    {
+        "id": 10,
+        "title": "Transportation",
+        "subTitle": "Master rare and specialized modes of transportation.",
+        "isComplete": false,
+        "spellingList": [
+            {"id": 1, "title": "tuk-tuk"},
+            {"id": 2, "title": "snowmobile"},
+            {"id": 3, "title": "bullet train"},
+            {"id": 4, "title": "zeppelin"},
+            {"id": 5, "title": "segway"},
+            {"id": 6, "title": "funicular"},
+            {"id": 7, "title": "surrey"},
+            {"id": 8, "title": "unicycle"},
+            {"id": 9, "title": "dune buggy"},
+            {"id": 10, "title": "skydiving"}
+        ]
+    },
+    {
+        "id": 11,
+        "title": "School Supplies",
+        "subTitle": "Master rare and specialized school supplies.",
+        "isComplete": false,
+        "spellingList": [
+            {"id": 1, "title": "microscope"},
+            {"id": 2, "title": "laptop"},
+            {"id": 3, "title": "tablet"},
+            {"id": 4, "title": "stylus"},
+            {"id": 5, "title": "whiteboard"},
+            {"id": 6, "title": "lab coat"},
+            {"id": 7, "title": "graph paper"},
+            {"id": 8, "title": "dictaphone"},
+            {"id": 9, "title": "desk"},
+            {"id": 10, "title": "flip chart"}
+        ]
+    },
+    {
+        "id": 12,
+        "title": "Sports",
+        "subTitle": "Master rare and specialized sports from around the world.",
+        "isComplete": false,
+        "spellingList": [
+            {"id": 1, "title": "sepak takraw"},
+            {"id": 2, "title": "kabaddi"},
+            {"id": 3, "title": "pétanque"},
+            {"id": 4, "title": "korfball"},
+            {"id": 5, "title": "netball"},
+            {"id": 6, "title": "handball"},
+            {"id": 7, "title": "shinty"},
+            {"id": 8, "title": "hurling"},
+            {"id": 9, "title": "polo"},
+            {"id": 10, "title": "triathlon"}
+        ]
+    },
+    {
+        "id": 13,
+        "title": "Food",
+        "subTitle": "Master rare and specialized foods from different cultures.",
+        "isComplete": false,
+        "spellingList": [
+            {"id": 1, "title": "durian"},
+            {"id": 2, "title": "haggis"},
+            {"id": 3, "title": "mangosteen"},
+            {"id": 4, "title": "brie"},
+            {"id": 5, "title": "caviar"},
+            {"id": 6, "title": "poutine"},
+            {"id": 7, "title": "sauerkraut"},
+            {"id": 8, "title": "takoyaki"},
+            {"id": 9, "title": "kimchi"},
+            {"id": 10, "title": "foie gras"}
+        ]
+    },
+    {
+        "id": 14,
+        "title": "Jobs",
+        "subTitle": "Master rare and specialized professions from various fields.",
+        "isComplete": false,
+        "spellingList": [
+            {"id": 1, "title": "biologist"},
+            {"id": 2, "title": "urologist"},
+            {"id": 3, "title": "epidemiologist"},
+            {"id": 4, "title": "veterinarian"},
+            {"id": 5, "title": "pilot"},
+            {"id": 6, "title": "actuary"},
+            {"id": 7, "title": "scientist"},
+            {"id": 8, "title": "sommelier"},
+            {"id": 9, "title": "futurist"},
+            {"id": 10, "title": "orthodontist"}
+        ]
+    },
+    {
+        "id": 15,
+        "title": "Hobbies",
+        "subTitle": "Master rare and specialized hobbies from different cultures.",
+        "isComplete": false,
+        "spellingList": [
+            {"id": 1, "title": "bonsai"},
+            {"id": 2, "title": "origami"},
+            {"id": 3, "title": "fishing"},
+            {"id": 4, "title": "capoeira"},
+            {"id": 5, "title": "kendo"},
+            {"id": 6, "title": "glassblowing"},
+            {"id": 7, "title": "rock climbing"},
+            {"id": 8, "title": "tai chi"},
+            {"id": 9, "title": "ikebana"},
+            {"id": 10, "title": "tea ceremony"}
+        ]
+    },
+    {
+        "id": 16,
+        "title": "Time",
+        "subTitle": "Master specialized time concepts and measurements.",
+        "isComplete": false,
+        "spellingList": [
+            {"id": 1, "title": "nanosecond"},
+            {"id": 2, "title": "millennium"},
+            {"id": 3, "title": "biennium"},
+            {"id": 4, "title": "day"},
+            {"id": 5, "title": "microsecond"},
+            {"id": 6, "title": "picosecond"},
+            {"id": 7, "title": "femtosecond"},
+            {"id": 8, "title": "minute"},
+            {"id": 9, "title": "week"},
+            {"id": 10, "title": "month"}
+        ]
+    },
+  
+    {
+        "id": 17,
+        "title": "Vegetables",
+        "subTitle": "Master rare and specialized vegetables from different regions.",
+        "isComplete": false,
+        "spellingList": [
+            {"id": 1, "title": "jicama"},
+            {"id": 2, "title": "okra"},
+            {"id": 3, "title": "tomato"},
+            {"id": 4, "title": "yuca"},
+            {"id": 5, "title": "karela"},
+            {"id": 6, "title": "chayote"},
+            {"id": 7, "title": "luffa"},
+            {"id": 8, "title": "spinach"},
+            {"id": 9, "title": "samphire"},
+            {"id": 10, "title": "bell pepper"}
+        ]
+    },
+    {
+        "id": 18,
+        "title": "Feelings",
+        "subTitle": "Master rare and complex emotions from various cultures.",
+        "isComplete": false,
+        "spellingList": [
+            {"id": 1, "title": "happy"},
+            {"id": 2, "title": "ecstatic"},
+            {"id": 3, "title": "melancholic"},
+            {"id": 4, "title": "nostalgic"},
+            {"id": 6, "title": "serene"},
+            {"id": 7, "title": "vexed"},
+            {"id": 8, "title": "zealous"},
+            {"id": 9, "title": "crestfallen"},
+            {"id": 10, "title": "triumphant"}
+        ]
+    },
+    {
+        "id": 19,
+        "title": "Emotions",
+        "subTitle": "Master rare and complex emotions from various cultures.",
+        "isComplete": false,
+        "spellingList": [
+            {"id": 1, "title": "ambivalent"},
+            {"id": 2, "title": "apathetic"},
+            {"id": 3, "title": "ecstatic"},
+            {"id": 4, "title": "melancholic"},
+            {"id": 5, "title": "nostalgic"},
+            {"id": 6, "title": "serene"},
+            {"id": 7, "title": "vexed"},
+            {"id": 8, "title": "zealous"},
+            {"id": 9, "title": "crestfallen"},
+            {"id": 10, "title": "triumphant"}
+        ]
+    },
+    {
+        "id": 20,
+        "title": "Vehicles",
+        "subTitle": "Master specialized vehicles and advanced transportation methods.",
+        "isComplete": false,
+        "spellingList": [
+            {"id": 1, "title": "airplane"},
+            {"id": 2, "title": "helicopter"},
+            {"id": 3, "title": "boat"},
+            {"id": 4, "title": "ferry"},
+            {"id": 5, "title": "subway"},
+            {"id": 6, "title": "tractor"},
+            {"id": 7, "title": "hovercraft"},
+            {"id": 8, "title": "cruise ship"},
+            {"id": 9, "title": "jet ski"},
+            {"id": 10, "title": "rickshaw"}
+        
+        ]
+    },
+    {
+        "id": 21,
+        "title": "Financial Terms",
+        "subTitle": "Master specialized financial terms and concepts in economics and finance.",
+        "isComplete": false,
+        "spellingList": [
+            {"id": 1, "title": "quantitative easing"},
+            {"id": 2, "title": "expense"},
+            {"id": 3, "title": "budget"},
+            {"id": 4, "title": "savings"},
+            {"id": 5, "title": "debt"},
+            {"id": 6, "title": "credit"},
+            {"id": 7, "title": "investment"},
+            {"id": 8, "title": "loan"},
+            {"id": 9, "title": "interest"},
+            {"id": 10, "title": "insurance"}
+        ]
+    },
+    {
+        "id": 22,
+        "title": "Fields of Science",
+        "subTitle": "Master specialized fields of science and their interdisciplinary applications.",
+        "isComplete": false,
+        "spellingList": [
+            {"id": 1, "title": "string theory"},
+            {"id": 2, "title": "nanomedicine"},
+            {"id": 3, "title": "quantum computing"},
+            {"id": 4, "title": "astrochemistry"},
+            {"id": 5, "title": "synthetic biology"},
+            {"id": 6, "title": "neuroprosthetics"},
+            {"id": 7, "title": "genomic editing"},
+            {"id": 8, "title": "particle astrophysics"},
+            {"id": 9, "title": "biomechanics"},
+            {"id": 10, "title": "nanoelectronics"}
+        ]
+    },
+    {
+        "id": 23,
+        "title": "Adjectives",
+        "subTitle": "Master rare and nuanced adjectives for sophisticated language use.",
+        "isComplete": false,
+        "spellingList": [
+            {"id": 1, "title": "indefatigable"},
+            {"id": 2, "title": "inscrutable"},
+            {"id": 3, "title": "effervescent"},
+            {"id": 4, "title": "mercurial"},
+            {"id": 5, "title": "iridescent"},
+            {"id": 6, "title": "ephemeral"},
+            {"id": 7, "title": "serendipitous"},
+            {"id": 8, "title": "quixotic"},
+            {"id": 9, "title": "ebullient"},
+            {"id": 10, "title": "idiosyncratic"}
+        ]
+    },
+    {
+        "id": 24,
+        "title": "Items You Buy",
+        "subTitle": "Master specialized items and luxury products for various purposes.",
+        "isComplete": false,
+        "spellingList": [
+            {"id": 1, "title": "organic produce"},
+            {"id": 2, "title": "artisanal cheese"},
+            {"id": 3, "title": "gourmet chocolate"},
+            {"id": 4, "title": "fine wine"},
+            {"id": 5, "title": "premium coffee beans"},
+            {"id": 6, "title": "designer clothing"},
+            {"id": 7, "title": "luxury watches"},
+            {"id": 8, "title": "high-end electronics"},
+            {"id": 9, "title": "exotic spices"},
+            {"id": 10, "title": "handcrafted furniture"}
         ]
     }
    

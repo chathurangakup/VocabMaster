@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Animated, ImageBackground, SafeAreaView, ScrollView, Text, TouchableOpacity, View, Dimensions, KeyboardAvoidingView, TextInput, Keyboard, FlatList } from 'react-native';
+import { Animated, ImageBackground, SafeAreaView, ScrollView, Text, TouchableOpacity, View, Dimensions, KeyboardAvoidingView, TextInput, Keyboard, FlatList, Platform } from 'react-native';
 import Images from '../../config/Images.d';
 import TrackPlayer, { Capability } from 'react-native-track-player';
 import { BannerAd, BannerAdSize, InterstitialAd, AdEventType, TestIds } from 'react-native-google-mobile-ads';
@@ -16,6 +16,9 @@ import { RootState } from '../../store';
 import { VOCABMASTER_BANNER_ID, VOCABM_INTESTRIAL } from '../../utils/constants';
 
 
+const interstitial = InterstitialAd.createForAdRequest(VOCABM_INTESTRIAL, {
+    // keywords: ['fashion', 'clothing'],
+});
 
 const MainScreen = (props: any) => {
 
@@ -23,7 +26,8 @@ const MainScreen = (props: any) => {
 
     const [currentQuectionIndex, setCurrentQuectionIndex] = useState(0);
     const [vocabResponce, setvocabResponce] = useState([])
-    const [vocabNoDataResponce, setvocabNoDataResponce]: any= useState({})
+    const [vocabNoDataResponce, setvocabNoDataResponce]: any = useState({})
+    const [isBadResponce, setIsBadResponce]: any = useState(false)
     const [spellingText, setSpellingText] = useState('');
     const [speakerColorStatus, setSpeakerColorStatus] = useState(-1);
     const [isDisableButton, setIsDisableButton] = useState(true);
@@ -44,7 +48,7 @@ const MainScreen = (props: any) => {
 
     const { width, height } = Dimensions.get('window');
 
-    const { spellingList, spellingListMainId, mainCatogoryId } = props.route.params;
+    const { spellingList, spellingListMainId, mainCatogoryId, spellingTitle } = props.route.params;
 
     const [progress, setProgress] = useState(new Animated.Value(0));
     const progressAnim = progress.interpolate({
@@ -54,9 +58,7 @@ const MainScreen = (props: any) => {
 
     const [loaded, setLoaded] = useState(false);
 
-    const interstitial = InterstitialAd.createForAdRequest(VOCABM_INTESTRIAL, {
-        keywords: ['fashion', 'clothing'],
-    });
+
 
     useEffect(() => {
         const unsubscribe = interstitial.addAdEventListener(AdEventType.LOADED, () => {
@@ -120,6 +122,15 @@ const MainScreen = (props: any) => {
         return updatedTasks;
     };
 
+    function isEmpty(obj: object) {
+        for (const prop in obj) {
+            if (Object.hasOwn(obj, prop)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     const SpellingCheckApiCall = async () => {
 
         if (isConnectedInternet) {
@@ -127,9 +138,16 @@ const MainScreen = (props: any) => {
             const responce = await fetchDataSpellingMeaningApi(spellingList[currentQuectionIndex]?.title);
             console.log("responce user", JSON.stringify(responce))
             if (responce?.length == undefined) {
-                setvocabNoDataResponce(responce)
-                setvocabResponce([]);
-              
+                console.log("responce  kkkkkk", responce)
+                if (isEmpty(responce)) {
+                    console.log("is empty responce  kkkkkki", responce)
+                    setIsBadResponce(true)
+                } else {
+                    setvocabNoDataResponce(responce)
+                    setvocabResponce([]);
+                }
+
+
             } else {
                 setvocabResponce(responce);
                 setvocabNoDataResponce({})
@@ -169,11 +187,11 @@ const MainScreen = (props: any) => {
         let correctNumberOfAnswers = ''
         let colorcorrectNumberOfAnswers = ''
         if (currentQuectionIndex + 1 >= spellingList.length) {
-
-            if (!loaded) {
-
-            } else {
+            try {
+                interstitial.load()
                 interstitial.show()
+            } catch (e) {
+                console.log(`${Platform.OS} interstitial load error: ${e}`);
             }
 
             if (spellingList.length == numberOfCorrectAns) {
@@ -309,47 +327,61 @@ const MainScreen = (props: any) => {
         );
     };
 
+    const getOneNonEmptyAudio = (array: any[]) => {
+        // Find the first non-empty audio URL
+        const nonEmptyAudio = array.find((obj: { audio: string; }) => obj.audio && obj.audio !== '');
+        return nonEmptyAudio ? nonEmptyAudio.audio : null;
+    };
+
+
     const RenderMainView = ({ data, index }: any) => {
         return (
             <View style={{ backgroundColor: 'white', margin: 15, borderRadius: 10, flex: 1 }}>
                 <View style={{ paddingTop: 10, paddingLeft: 10, paddingRight: 10, justifyContent: 'center', alignItems: 'center' }}>
 
-                    {/* {data.phonetics[0]?.audio !== undefined ?
-                        <View style={styles.speakerMainStyle}>
-                            <TouchableOpacity disabled={speakerColorStatus == -1 ? false : true}>
+                    {getOneNonEmptyAudio(data?.phonetics) !== null ?
+                        <View>
+                            <TouchableOpacity style={[styles.speakerMainStyle, { backgroundColor: speakerColorStatus == -1 ? colors.lightBlue : colors.lightOrange }]} disabled={speakerColorStatus == -1 ? false : true}
+                                onPress={async () => {
+                                    try {
+                                        console.log('lolo', data)
+                                        await TrackPlayer.reset();
+                                        const newObj = {
+                                            id: 1,
+                                            url: getOneNonEmptyAudio(data?.phonetics),
+                                        }
+                                        await TrackPlayer.add(newObj);
+                                        await TrackPlayer.play();
+                                        console.log('lolo', index)
+                                        setSpeakerColorStatus(index)
+                                        setTimeout(() => {
+                                            setSpeakerColorStatus(-1);
+                                        }, 5000);
+                                    } catch (e) {
+                                        console.log(e)
+                                    }
+
+                                }}>
                                 <Icons
                                     name="sound"
                                     size={30}
                                     disabled={speakerColorStatus == -1 ? false : true}
-                                    color={index == speakerColorStatus ? colors.red : colors.blackColor}
-                                    onPress={async () => {
+                                    color={index == speakerColorStatus ? colors.red : colors.green}
 
-                                        try {
-                                            console.log('lolo', index)
-                                            await TrackPlayer.reset();
-                                            const newObj = {
-                                                id: 1,
-                                                url: data.phonetics[0].audio,
-
-                                            }
-                                            await TrackPlayer.add(newObj);
-                                            await TrackPlayer.play();
-                                            console.log('lolo', index)
-                                            setSpeakerColorStatus(index)
-                                            setTimeout(() => {
-                                                setSpeakerColorStatus(-1);
-                                            }, 5000);
-                                        } catch (e) {
-                                            console.log(e)
-                                        }
-
-                                    }}
                                 />
                             </TouchableOpacity>
 
                         </View>
                         : null
-                    } */}
+                    }
+                    {/* {data.phonetics.length!==0 ?
+             
+                  
+                :
+                null
+                
+                } */}
+
                 </View>
                 <View>
                     {data.meanings.map((item: any, index1: number) =>
@@ -464,6 +496,11 @@ const MainScreen = (props: any) => {
         )
     }
 
+    const onPressRetry = () => {
+        SpellingCheckApiCall();
+        setIsBadResponce(false)
+    }
+
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <ImageBackground
@@ -472,7 +509,7 @@ const MainScreen = (props: any) => {
                 style={styles.mainComp}>
                 <AppBar
                     navigation={props.navigation}
-                    title={'Vocab Master'}
+                    title={spellingTitle}
                 />
                 <View style={styles.progressbarmainComp}>
                     <View style={{ flex: 3 }}>
@@ -487,35 +524,39 @@ const MainScreen = (props: any) => {
                     <View style={styles.renderViewStyle}>
                         <ScrollView automaticallyAdjustKeyboardInsets={true} style={{ height: height }}>
                             {/* {vocabResponce?.length !== undefined ? */}
-                                {vocabResponce?.map((item: any, index: number) =>
-                                    <RenderMainView data={item} index={index} />
-                                )}
-                                
-                                
-                            {vocabNoDataResponce?.title!==undefined?
-                             <View style={{flex:1, alignItems:'center', paddingTop: (height*10)/100}}>
-                             <Text style={{ color: colors.blackColor }}>
-                                     {vocabNoDataResponce?.title}
-                                     
-                                 </Text>
-                                 <Text style={{ color: colors.blackColor, padding:30 }}>
-                                     {vocabNoDataResponce?.message}
-                                     
-                                 </Text>
-                             </View>
-                             :
-                             null
-                            
+                            {vocabResponce?.map((item: any, index: number) =>
+                                <RenderMainView data={item} index={index} />
+                            )}
+
+
+                            {vocabNoDataResponce?.title !== undefined ?
+                                <View style={{ flex: 1, alignItems: 'center', paddingTop: (height * 10) / 100 }}>
+                                    <Text style={{ color: colors.blackColor }}>
+                                        {vocabNoDataResponce?.title}
+                                    </Text>
+                                    <Text style={{ color: colors.blackColor, padding: 30 }}>
+                                        {vocabNoDataResponce?.message}
+                                    </Text>
+                                </View>
+                                :
+                                null
                             }
-                               
-                        
-                                  
-        
 
 
-                  
+                            {isBadResponce == true ?
+                                <View style={{ flex: 1, alignItems: 'center', paddingTop: (height * 10) / 100 }}>
+                                    <TouchableOpacity onPress={() => onPressRetry()}>
+                                        <Text style={{ color: colors.blackColor }}>
+                                            Please Retry
+                                        </Text>
+                                    </TouchableOpacity>
 
-                            
+
+                                </View>
+                                :
+                                null
+                            }
+
 
                         </ScrollView>
                     </View>

@@ -4,7 +4,7 @@ import { colors } from "../config/styles";
 export const mainListArray = [
     {
         id:1,
-        title:'Foundational',
+        title:'Beginners',
         subTitle:'Level 1',
         image:'',
         color: colors.lightTeal
@@ -300,10 +300,10 @@ export const vocabResponce = [
 
   export const SPELLING_MEANING_API = 'https://api.dictionaryapi.dev/api/v2/entries/en/';
 
-export const BASIC_API_URL = 'https://firebasestorage.googleapis.com/v0/b/vocabmaster-a6dfd.appspot.com/o/basic.json?alt=media&token=8a21650a-1879-401b-8780-91c8be56e012';
-export const INTERMEDIATE_API_URL  = 'https://firebasestorage.googleapis.com/v0/b/vocabmaster-a6dfd.appspot.com/o/intermediate.json?alt=media&token=767ddd55-07b5-421b-acdc-7ae7b1303949';
-export const ADVANCE_API_URL  = 'https://firebasestorage.googleapis.com/v0/b/vocabmaster-a6dfd.appspot.com/o/advance.json?alt=media&token=66ac8170-c797-4070-bede-43223f2de06f';
-export const MESTRY_API_URL  = 'https://firebasestorage.googleapis.com/v0/b/vocabmaster-a6dfd.appspot.com/o/mestry.json?alt=media&token=c4b5e4de-3092-41bd-8ed5-55c3d871af8c';
+export const BASIC_API_URL = 'https://firebasestorage.googleapis.com/v0/b/vocabmaster-a6dfd.appspot.com/o/basic.json?alt=media&token=c92a2cdf-fe2a-4040-851f-a2a8e4f767d9';
+export const INTERMEDIATE_API_URL  = 'https://firebasestorage.googleapis.com/v0/b/vocabmaster-a6dfd.appspot.com/o/intermediate.json?alt=media&token=5bb464c1-3fc2-4e23-a1fc-0a48138c6313';
+export const ADVANCE_API_URL  = 'https://firebasestorage.googleapis.com/v0/b/vocabmaster-a6dfd.appspot.com/o/advance.json?alt=media&token=54af10bf-21d1-4e1a-8595-0fa768677c63';
+export const MESTRY_API_URL  = 'https://firebasestorage.googleapis.com/v0/b/vocabmaster-a6dfd.appspot.com/o/mestry.json?alt=media&token=12e24c7e-55e9-465f-be77-a9aaba5d8337';
 
 export const VERSION_CHECK_API_URL  = 'https://firebasestorage.googleapis.com/v0/b/vocabmaster-a6dfd.appspot.com/o/version.json?alt=media&token=21c42c2a-bbe8-4379-a121-d5e3c1adba08';
 
@@ -312,7 +312,7 @@ export const HELP_SECTION_TEXT='1.Read the definitions of the words and write th
 
 
 
-export const LESSON_BANNER_ID=__DEV__ ? TestIds.BANNER :'ca-app-pub-2295070264667994/4939243471';
-export const VOCABMASTER_BANNER_ID=__DEV__ ? TestIds.BANNER :'ca-app-pub-2295070264667994/1159866284';
-export const VOCABM_INTESTRIAL=__DEV__ ? TestIds.INTERSTITIAL :'ca-app-pub-2295070264667994/2880142064';
-export const BACKINS=__DEV__ ? TestIds.INTERSTITIAL :'ca-app-pub-2295070264667994/2607759451'
+export const LESSON_BANNER_ID =__DEV__ ? TestIds.BANNER :'ca-app-pub-2295070264667994/4939243471';
+export const VOCABMASTER_BANNER_ID =__DEV__ ? TestIds.BANNER :'ca-app-pub-2295070264667994/1159866284';
+export const VOCABM_INTESTRIAL =__DEV__ ? TestIds.INTERSTITIAL :'ca-app-pub-2295070264667994/2880142064';
+export const BACKINS =__DEV__ ? TestIds.INTERSTITIAL :'ca-app-pub-2295070264667994/2607759451'

@@ -94,12 +94,13 @@ const Lessons = (props: any) => {
     return (
       <TouchableOpacity
         key={titles.id}
-        activeOpacity={0.0}
+        activeOpacity={0.5}
         onPress={() => {
           props.navigation.navigate('mainScreen', {
-            spellingList: titles.spellingList,
-            spellingListMainId: titles.id,
-            mainCatogoryId: mainId
+            spellingList: titles?.spellingList,
+            spellingListMainId: titles?.id,
+            mainCatogoryId: mainId,
+            spellingTitle: titles?.title
           });
         }}
         style={[styles.card, styles.shadowProp]}>
@@ -150,8 +151,6 @@ const Lessons = (props: any) => {
       <View style={styles.header}>
         <Image source={Images.SubjectTeach} style={styles.imgStyles} />
         <Text style={styles.menuTitle}>Learn new words daily with our fun and engaging approach.</Text>
-
-
         <Search onChange={text => setSearchText(text)} value={searchText} />
       </View>
 

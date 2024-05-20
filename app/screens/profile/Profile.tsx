@@ -240,9 +240,7 @@ const Profile = (props: any) => {
   )
   ]
 
-  if (!loaded) {
-    return null;
-  }
+
 
   return (
     <SafeAreaView style={styles.root}>

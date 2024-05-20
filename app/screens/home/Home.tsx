@@ -3,12 +3,13 @@ import { Text, View, SafeAreaView, StyleSheet, Image, Animated, Dimensions, Flat
 import { AppBar } from '../../componants/AppBar';
 import Images from '../../config/Images.d';
 import { colors } from '../../config/styles';
-import { mainListArray } from '../../utils/constants';
+import { LESSON_BANNER_ID, VOCABMASTER_BANNER_ID, mainListArray } from '../../utils/constants';
 import { changeLoadingStatus } from '../../slices/CommonSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import { RootState } from '../../store';
 import { getVersionInfo } from '../../slices/CommonSlice';
+import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
 
 const { width, height } = Dimensions.get('window');
 
@@ -33,9 +34,8 @@ const Home = (props: any) => {
   const SubjectItem = ({items}:any) => {
     console.log("items",items)
     return (
-     
       <TouchableOpacity
-        activeOpacity={0.0}
+        activeOpacity={0.6}
         onPress={() => {
           props.navigation.navigate('lessons', {
             mainId: items.item.id,
@@ -48,8 +48,6 @@ const Home = (props: any) => {
           style={styles.mainItemImgStyle}
           source={Images.BgWave}
         />
-          
-
       </TouchableOpacity>
 
 
@@ -62,7 +60,7 @@ const Home = (props: any) => {
       <AppBar
         navigation={props.navigation}
         isShowBack={false}
-        title={'Main menu'}
+        title={'Vocab Master'}
       />
       <View style={styles.header}>
         <Image source={Images.SubjectTeach} style={styles.imgStyles} />
@@ -81,6 +79,17 @@ const Home = (props: any) => {
           renderItem={item => <SubjectItem items={item} />}
         />
       </View>
+
+      <BannerAd
+        size={BannerAdSize.BANNER}
+        unitId={LESSON_BANNER_ID}
+        onAdLoaded={() => {
+          console.log('Advert loaded');
+        }}
+        onAdFailedToLoad={error => {
+          //console.error('Advert failed to load: ', error);
+        }}
+      />
 
     </SafeAreaView>
   )

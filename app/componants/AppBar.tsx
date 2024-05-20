@@ -6,15 +6,17 @@ import { AdEventType, InterstitialAd, TestIds } from 'react-native-google-mobile
 import { colors } from '../config/styles';
 import { BACKINS } from '../utils/constants';
 
+
+const interstitial = InterstitialAd.createForAdRequest(BACKINS, {
+  // keywords: ['fashion', 'clothing'],
+});
+
+
 export const AppBar = (props: {
   title: ReactNode; navigation: { goBack: () => void; navigate: (arg0: string) => void; }; isShowBack: any;
 }) => {
 
   const [loaded, setLoaded] = useState(false);
-
-  const interstitial = InterstitialAd.createForAdRequest(BACKINS, {
-     keywords: ['fashion', 'clothing'],
-  });
 
 
   useEffect(() => {
