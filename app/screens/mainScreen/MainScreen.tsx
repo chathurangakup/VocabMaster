@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Animated, ImageBackground, SafeAreaView, ScrollView, Text, TouchableOpacity, View, Dimensions, KeyboardAvoidingView, TextInput, Keyboard, FlatList, Platform } from 'react-native';
 import Images from '../../config/Images.d';
-import TrackPlayer, { Capability } from 'react-native-track-player';
+// import TrackPlayer, { Capability } from 'react-native-track-player';
 import { BannerAd, BannerAdSize, InterstitialAd, AdEventType, TestIds } from 'react-native-google-mobile-ads';
 
 import { styles } from './Styles';
@@ -75,25 +75,25 @@ const MainScreen = (props: any) => {
 
     const setupPlayer = async () => {
         let isPlayerInitialized = false;
-        try {
-            await TrackPlayer.setupPlayer();
-            TrackPlayer.updateOptions({
-                // Media controls capabilities
-                capabilities: [
-                    Capability.Play,
-                    Capability.Pause,
-                    Capability.SkipToNext,
-                    Capability.SkipToPrevious,
-                    Capability.Stop,
-                ],
-                compactCapabilities: [Capability.Play, Capability.Pause],
-            });
-            isPlayerInitialized = true
-        } catch (e) { }
+        // try {
+        //     await TrackPlayer.setupPlayer();
+        //     TrackPlayer.updateOptions({
+        //         // Media controls capabilities
+        //         capabilities: [
+        //             Capability.Play,
+        //             Capability.Pause,
+        //             Capability.SkipToNext,
+        //             Capability.SkipToPrevious,
+        //             Capability.Stop,
+        //         ],
+        //         compactCapabilities: [Capability.Play, Capability.Pause],
+        //     });
+        //     isPlayerInitialized = true
+        // } catch (e) { }
     }
 
     useEffect(() => {
-        setupPlayer()
+       // setupPlayer()
     }, []);
 
 
@@ -167,7 +167,7 @@ const MainScreen = (props: any) => {
 
     const clickSubmitButton = async () => {
 
-        clearInterval(intervalRef.current)
+      //  clearInterval(intervalRef.current)
         console.log("spellingList oooo", spellingList[currentQuectionIndex]?.titleSpellin)
         if (spellingList[currentQuectionIndex]?.title == spellingText.toLowerCase()) {
             setIsSuccessAns(true)
@@ -343,23 +343,23 @@ const MainScreen = (props: any) => {
                         <View>
                             <TouchableOpacity style={[styles.speakerMainStyle, { backgroundColor: speakerColorStatus == -1 ? colors.lightBlue : colors.lightOrange }]} disabled={speakerColorStatus == -1 ? false : true}
                                 onPress={async () => {
-                                    try {
-                                        console.log('lolo', data)
-                                        await TrackPlayer.reset();
-                                        const newObj = {
-                                            id: 1,
-                                            url: getOneNonEmptyAudio(data?.phonetics),
-                                        }
-                                        await TrackPlayer.add(newObj);
-                                        await TrackPlayer.play();
-                                        console.log('lolo', index)
-                                        setSpeakerColorStatus(index)
-                                        setTimeout(() => {
-                                            setSpeakerColorStatus(-1);
-                                        }, 5000);
-                                    } catch (e) {
-                                        console.log(e)
-                                    }
+                                    // try {
+                                    //     console.log('lolo', data)
+                                    //     await TrackPlayer.reset();
+                                    //     const newObj = {
+                                    //         id: 1,
+                                    //         url: getOneNonEmptyAudio(data?.phonetics),
+                                    //     }
+                                    //     await TrackPlayer.add(newObj);
+                                    //     await TrackPlayer.play();
+                                    //     console.log('lolo', index)
+                                    //     setSpeakerColorStatus(index)
+                                    //     setTimeout(() => {
+                                    //         setSpeakerColorStatus(-1);
+                                    //     }, 5000);
+                                    // } catch (e) {
+                                    //     console.log(e)
+                                    // }
 
                                 }}>
                                 <Icons
@@ -449,7 +449,7 @@ const MainScreen = (props: any) => {
         if (remainingTime > 0) {
             setRemainingTime(prevTime => prevTime - 1);
         } else {
-            clearInterval(intervalRef.current);
+          //  clearInterval(intervalRef.current);
             setIsShowTextInput(false)
             setIsEndTimeout(true)
             setIsDisableButton(false)
@@ -458,11 +458,11 @@ const MainScreen = (props: any) => {
 
     useEffect(() => {
         intervalRef.current = setInterval(decreaseTime, 1000); // Decrease every second
-        return () => clearInterval(intervalRef.current);
+       // return () => clearInterval(intervalRef.current);
     }, [remainingTime]);
 
     const handleRestart = () => {
-        clearInterval(intervalRef.current); // Stop the current interval
+      //  clearInterval(intervalRef.current); // Stop the current interval
         setRemainingTime(initialTime); // Reset the remaining time
         intervalRef.current = setInterval(decreaseTime, 1000); // Start a new interval
     };

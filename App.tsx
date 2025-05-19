@@ -7,9 +7,9 @@
 
 import React from 'react';
 import type { PropsWithChildren } from 'react';
+import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import {
-  SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
@@ -39,7 +39,7 @@ function App(): React.JSX.Element {
     <Provider store={store}>
       <BottomSheetModalProvider>
         <PersistGate loading={null} persistor={persistor}>
-          <SafeAreaView style={{ flex: 1 }}>
+          <View style={{ flex: 1 }}>
             <View style={{ flex: 1 }}>
               {/* <StatusBar backgroundColor={'red'} barStyle={'dark-content'} translucent={false} /> */}
               <NavigationContainer
@@ -54,7 +54,7 @@ function App(): React.JSX.Element {
               </NavigationContainer>
            
             </View>
-          </SafeAreaView>
+          </View>
         </PersistGate>
       </BottomSheetModalProvider>
     </Provider>
