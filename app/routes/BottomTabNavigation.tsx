@@ -26,25 +26,25 @@ const TabArr=[
 const animate1 = { 0: { scale: .5, translateY: 7 }, .92: { translateY: -34 }, 1: { scale: 1.2, translateY: -24 } }
 const animate2 = { 0: { scale: 1.2, translateY: -24 }, 1: { scale: 1, translateY: 7 } }
 
-const circle1 = { 0: { scale: 0 }, 0.3: { scale: .9 }, 0.5: { scale: .2 }, 0.8: { scale: .7 }, 1: { scale: 1 } }
-const circle2 = { 0: { scale: 1 }, 1: { scale: 0 } }
+const circle1 = { 0: { scale: 0 }, 0.3: { scale: .9 }, 0.5: { scale: .2 }, 0.8: { scale: .7 }, 1: { scale: 1 } } as Animatable.CustomAnimation;
+const circle2 = { 0: { scale: 1 }, 1: { scale: 0 } } as Animatable.CustomAnimation;
 
 const TabButton = (props: any) => {
   const { item, onPress, accessibilityState } = props;
-  const focused = accessibilityState.selected;
-  const viewRef = useRef(null);
-  const circleRef = useRef(null);
-  const textRef = useRef(null);
+  const focused = accessibilityState?.selected;
+  const viewRef = useRef<Animatable.View & { animate?: Function }>(null);
+  const circleRef = useRef<Animatable.View & { animate?: Function }>(null);
+  const textRef = useRef<Animatable.Text & { transitionTo?: Function }>(null);
 
   useEffect(() => {
     if (focused) {
-      viewRef.current.animate(animate1);
-      circleRef.current.animate(circle1);
-      textRef.current.transitionTo({ scale: 1 });
+      if (viewRef.current) viewRef.current.animate(animate1);
+      if (circleRef.current) circleRef.current.animate(circle1);
+      if (textRef.current) textRef.current.transitionTo({ transform: [{ scale: 1 }] });
     } else {
-      viewRef.current.animate(animate2);
-      circleRef.current.animate(circle2);
-      textRef.current.transitionTo({ scale: 0 });
+      if (viewRef.current) viewRef.current.animate(animate2);
+      if (circleRef.current) circleRef.current.animate(circle2);
+      if (textRef.current) textRef.current.transitionTo({ transform: [{ scale: 0 }] });
     }
   }, [focused])
 
@@ -85,7 +85,7 @@ export const BottomTabs = () => {
             options={{
               headerShown:false,
               tabBarShowLabel: false,
-              tabBarButton: (props) => <TabButton {...props} item={item} />
+              tabBarButton: (props: any) => <TabButton {...props} item={item} />
             }}
           />
         )
